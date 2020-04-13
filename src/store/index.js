@@ -44,7 +44,7 @@ export default new Vuex.Store({
       commit('setUser', user)
       localStorage.setItem('user', JSON.stringify(user))
     },
-    logout({ commit }) {
+    signOut({ commit }) {
       commit('clearAuthData')
       localStorage.removeItem('token')
       localStorage.removeItem('user')
