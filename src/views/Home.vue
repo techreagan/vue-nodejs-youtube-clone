@@ -20,12 +20,13 @@
 
         <v-row>
           <v-col
-            xs="6"
+            cols="12"
             sm="6"
             md="4"
             lg="3"
             v-for="(video, i) in loading ? 4 : videos.data"
             :key="i"
+            class="mx-auto"
           >
             <v-skeleton-loader
               class="mx-auto"
@@ -94,7 +95,7 @@ export default {
     async getVideos() {
       this.loading = true
       const videos = await VideoService.getAll()
-        .catch(err => {
+        .catch((err) => {
           console.log(err)
           this.errored = true
         })

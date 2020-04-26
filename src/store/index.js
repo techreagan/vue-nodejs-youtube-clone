@@ -10,10 +10,13 @@ export default new Vuex.Store({
     isUserLoggedIn: localStorage.getItem('token') || false
   },
   getters: {
-    isAuthenticated: state => {
+    isAuthenticated: (state) => {
       return state.isUserLoggedIn
     },
-    currentUser: state => {
+    getToken: (state) => {
+      return state.token
+    },
+    currentUser: (state) => {
       return state.user
     }
   },

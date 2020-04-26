@@ -1,8 +1,12 @@
 <template>
-  <nav>
+  <nav id="navbar">
     <v-app-bar class="white" flat app clipped-left>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title class="font-weight-bold">VueTube</v-toolbar-title>
+      <v-toolbar-title class="font-weight-bold"
+        ><router-link to="/" class="black--text" style="text-decoration: none"
+          >VueTube</router-link
+        ></v-toolbar-title
+      >
       <v-spacer></v-spacer>
       <v-text-field
         flat
@@ -14,19 +18,55 @@
         @click:append="search"
         class="hidden-sm-and-down"
       ></v-text-field>
-      <!-- <v-toolbar-title>Page title</v-toolbar-title> -->
 
       <v-spacer></v-spacer>
 
-      <v-btn icon>
-        <v-icon size="25">mdi-video-plus</v-icon>
-      </v-btn>
-      <v-btn icon :class="{ 'mr-7': !$store.getters.isAuthenticated }">
+      <v-menu offsetY>
+        <template v-slot:activator="{ on: menu }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on: tooltip }">
+              <v-btn icon v-on="{ ...tooltip, ...menu }"
+                ><v-icon size="25">mdi-video-plus</v-icon></v-btn
+              >
+            </template>
+            <span>Create a video and more</span>
+          </v-tooltip>
+        </template>
+        <v-list>
+          <v-list-item router to="/studio">
+            <v-list-item-icon class="mr-3"
+              ><v-icon>mdi-play-box-outline</v-icon></v-list-item-icon
+            >
+            <v-list-item-title>Upload video</v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon class="mr-3"
+              ><v-icon>mdi-access-point</v-icon></v-list-item-icon
+            >
+            <v-list-item-title>Go live</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on"> <v-icon size="25">mdi-apps</v-icon></v-btn>
+        </template>
+        <span>VueTube apps</span>
+      </v-tooltip>
+      <!-- <v-btn icon :class="{ 'mr-7': !$store.getters.isAuthenticated }">
         <v-icon size="25">mdi-apps</v-icon>
       </v-btn>
       <v-btn icon class="mr-7" v-if="$store.getters.isAuthenticated">
         <v-icon size="25">mdi-bell</v-icon>
-      </v-btn>
+      </v-btn> -->
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on" class="mr-7">
+            <v-icon size="25">mdi-bell</v-icon></v-btn
+          >
+        </template>
+        <span>Notifications</span>
+      </v-tooltip>
       <v-btn
         tile
         outlined
@@ -67,13 +107,13 @@
           <v-divider></v-divider>
 
           <v-list>
-            <v-list-item router to="/logout">
+            <v-list-item router to="/channels/10">
               <v-list-item-icon>
                 <v-icon>mdi-account-box</v-icon>
               </v-list-item-icon>
               <v-list-item-title>Your channel</v-list-item-title>
             </v-list-item>
-            <v-list-item router to="/logout">
+            <v-list-item router to="/studio">
               <v-list-item-icon>
                 <v-icon>mdi-youtube-studio</v-icon>
               </v-list-item-icon>
@@ -87,27 +127,28 @@
             </v-list-item>
           </v-list>
         </v-card>
-
-        <!-- <v-list>
-          <v-list-item router to="/logout">
-            <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item>
-        </v-list> -->
       </v-menu>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" clipped app id="nav">
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      :clipped="$route.name !== 'Watch'"
+      :temporary="$route.name === 'Watch'"
+      id="nav"
+    >
       <div tag="div" class="v-navigation-drawer__content" v-bar>
         <v-list dense nav class="py-0" tag="div">
-          <v-list-item class="hidden-lg-and-up">
+          <v-list-item
+            :class="{
+              'hidden-lg-and-up': $route.name === 'Watch' ? false : true
+            }"
+          >
             <v-app-bar-nav-icon
               @click="drawer = !drawer"
               class="mr-5"
             ></v-app-bar-nav-icon>
             <v-toolbar-title class="font-weight-bold">VueTube</v-toolbar-title>
-            <!-- <h2 class="py-5 font-weight-bold">
-              VueTube
-            </h2> -->
           </v-list-item>
           <v-divider class="hidden-lg-and-up"></v-divider>
           <div v-for="parentItem in items" :key="parentItem.header">
@@ -142,8 +183,7 @@
             </v-list-item>
             <v-divider class="mt-2 mb-2"></v-divider>
           </div>
-          <!-- <v-list-item-content> -->
-          <!-- <v-list-item-title class="font-weight-regular"> -->
+
           <span v-for="link in links" :key="link.text">
             <span v-if="link.text === 'Terms'" class="mb-2 d-block"> </span>
             <v-btn
@@ -156,15 +196,8 @@
               >{{ link.text }}</v-btn
             >
           </span>
-          <!-- </v-list-item-title> -->
-          <!-- </v-list-item-content> -->
         </v-list>
       </div>
-      <!-- <template v-slot:append>
-        <div class="pa-2">
-          <v-btn block color="primary">Logout</v-btn>
-        </div>
-      </template> -->
     </v-navigation-drawer>
   </nav>
 </template>
@@ -181,7 +214,7 @@ export default {
           { title: 'Trending', link: '/trending', icon: 'mdi-fire' },
           {
             title: 'Subscriptions',
-            link: '/subscriptions',
+            link: '#s',
             icon: 'mdi-youtube-subscription'
           }
         ]
@@ -191,29 +224,29 @@ export default {
         pages: [
           {
             title: 'Library',
-            link: '/library',
+            link: '#l',
             icon: 'mdi-play-box-multiple'
           },
           {
             title: 'History',
-            link: '/history',
+            link: '#h',
             icon: 'mdi-history'
           },
           {
             title: 'Your videos',
-            link: '/your-videos',
+            link: '#yv',
             icon: 'mdi-play-box-outline'
           },
 
           {
             title: 'Watch later',
-            link: '/watch-later',
+            link: '#wl',
             icon: 'mdi-clock'
           },
 
           {
             title: 'Liked videos',
-            link: '/liked-videos',
+            link: '#lw',
             icon: 'mdi-thumb-up'
           }
         ]
@@ -223,22 +256,22 @@ export default {
         pages: [
           {
             title: 'Traversy Media',
-            link: '/channels/traversy-media',
+            link: '#tm',
             icon: 'mdi-badge-account'
           },
           {
             title: 'The New Boston',
-            link: '/channels/the-new-boston',
+            link: '#tn',
             icon: 'mdi-badge-account'
           },
           {
             title: 'Net Ninija',
-            link: '/channels/net-ninija',
+            link: '#nn',
             icon: 'mdi-badge-account'
           },
           {
             title: 'Chris Hawks',
-            link: '/channels/chris-hawks',
+            link: '#ch',
             icon: 'mdi-badge-account'
           }
         ]
@@ -248,17 +281,17 @@ export default {
         pages: [
           {
             title: 'VueTube Premium',
-            link: '/more/vuetube-premium',
+            link: '#vp',
             icon: 'mdi-youtube'
           },
           {
             title: 'Gaming',
-            link: '/more/gaming',
+            link: '#g',
             icon: 'mdi-youtube-gaming'
           },
           {
             title: 'Live',
-            link: '/more/live',
+            link: '#li',
             icon: 'mdi-access-point'
           }
         ]
@@ -268,22 +301,22 @@ export default {
         pages: [
           {
             title: 'Setting',
-            link: '/settings',
+            link: '#sg',
             icon: 'mdi-cog'
           },
           {
             title: 'Report history',
-            link: '/report-history',
+            link: '#rh',
             icon: 'mdi-flag'
           },
           {
             title: 'Help',
-            link: '/help',
+            link: '#hp',
             icon: 'mdi-help-circle'
           },
           {
             title: 'Send feedback',
-            link: '/send-feedback',
+            link: '#f',
             icon: 'mdi-message-alert'
           }
         ]
@@ -311,71 +344,77 @@ export default {
       this.$store.dispatch('signOut')
       // this.$router.push('/')
     }
+  },
+  mounted() {
+    this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
+    this.drawer = this.$route.name === 'Watch' ? false : this.drawer
   }
 }
 </script>
 
 <style lang="scss">
-.active-item {
-  .v-list-item__icon {
-    color: red !important;
+#navbar {
+  .active-item {
+    .v-list-item__icon {
+      color: red !important;
+    }
   }
-}
-.v-navigation-drawer__border {
-  width: 0 !important;
-}
+  .v-navigation-drawer__border {
+    width: 0 !important;
+  }
 
-.vuebar-element {
-  height: 250px;
-  width: 100%;
-  max-width: 500px;
-  background: #dfe9fe;
-}
+  .vuebar-element {
+    height: 250px;
+    width: 100%;
+    max-width: 500px;
+    background: #dfe9fe;
+  }
 
-.vb > .vb-dragger {
-  z-index: 5;
-  width: 10px;
-  right: 0;
-}
+  .vb > .vb-dragger {
+    z-index: 5;
+    width: 10px;
+    right: 0;
+  }
 
-.vb > .vb-dragger > .vb-dragger-styler {
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-transform: rotate3d(0, 0, 0, 0);
-  transform: rotate3d(0, 0, 0, 0);
-  -webkit-transition: background-color 100ms ease-out, margin 100ms ease-out,
-    height 100ms ease-out;
-  transition: background-color 100ms ease-out, margin 100ms ease-out,
-    height 100ms ease-out;
+  .vb > .vb-dragger > .vb-dragger-styler {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: rotate3d(0, 0, 0, 0);
+    transform: rotate3d(0, 0, 0, 0);
+    -webkit-transition: background-color 100ms ease-out, margin 100ms ease-out,
+      height 100ms ease-out;
+    transition: background-color 100ms ease-out, margin 100ms ease-out,
+      height 100ms ease-out;
 
-  margin: 5px 5px 5px 0;
-  border-radius: 20px;
-  height: calc(100% - 10px);
-  display: block;
-}
+    margin: 5px 5px 5px 0;
+    border-radius: 20px;
+    height: calc(100% - 10px);
+    display: block;
+  }
 
-.v-navigation-drawer__content:hover .vb > .vb-dragger > .vb-dragger-styler {
-  width: 10px;
-  background-color: #e0e0e0;
-}
+  .v-navigation-drawer__content:hover .vb > .vb-dragger > .vb-dragger-styler {
+    width: 10px;
+    background-color: #e0e0e0;
+  }
 
-.vb.vb-scrolling-phantom > .vb-dragger > .vb-dragger-styler {
-  background-color: rgba(48, 121, 244, 0.3);
-  background-color: rgba(255, 255, 255, 0.3);
-}
+  .vb.vb-scrolling-phantom > .vb-dragger > .vb-dragger-styler {
+    background-color: rgba(48, 121, 244, 0.3);
+    background-color: rgba(255, 255, 255, 0.3);
+  }
 
-.vb > .vb-dragger:hover > .vb-dragger-styler {
-  margin: 0px;
-  width: 10px;
-}
+  .vb > .vb-dragger:hover > .vb-dragger-styler {
+    margin: 0px;
+    width: 10px;
+  }
 
-.vb.vb-dragging > .vb-dragger > .vb-dragger-styler {
-  background-color: rgba(48, 121, 244, 0.5);
-  margin: 0px;
-  height: 100%;
-}
+  .vb.vb-dragging > .vb-dragger > .vb-dragger-styler {
+    background-color: rgba(48, 121, 244, 0.5);
+    margin: 0px;
+    height: 100%;
+  }
 
-.vb.vb-dragging-phantom > .vb-dragger > .vb-dragger-styler {
-  background-color: rgba(48, 121, 244, 0.5);
+  .vb.vb-dragging-phantom > .vb-dragger > .vb-dragger-styler {
+    background-color: rgba(48, 121, 244, 0.5);
+  }
 }
 </style>
