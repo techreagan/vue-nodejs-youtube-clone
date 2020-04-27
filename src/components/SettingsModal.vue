@@ -166,7 +166,7 @@
               style="border-radius: 50%;"
             >
               <div
-                v-if="imgDataUrl == 'no-photo.jpg'"
+                v-if="$store.getters.currentUser.photoUrl == 'no-photo.jpg'"
                 class="px-12"
                 id="settings-image-placeholder"
               >
@@ -237,23 +237,26 @@ export default {
       const user = await AuthenticationService.updateUserDetails({
         channelName: this.formData.channelName,
         email: this.formData.email
-      }).catch((err) => {
-        this.loading.personalInfo = false
-        const errors = err.response.data.error
-
-        this.$refs.personalInfoForm.setErrors({
-          'email': errors.find((error) => {
-            return error.field === 'email'
-          })
-            ? ['This email is already taken']
-            : null,
-          'Channel Name': errors.find((error) => {
-            return error.field === 'channelName'
-          })
-            ? ['This channel name is already taken']
-            : null
-        })
       })
+        .catch((err) => {
+          this.loading.personalInfo = false
+          const errors = err.response.data.error
+
+          this.$refs.personalInfoForm.setErrors({
+            'email': errors.find((error) => {
+              return error.field === 'email'
+            })
+              ? ['This email is already taken']
+              : null,
+            'Channel Name': errors.find((error) => {
+              return error.field === 'channelName'
+            })
+              ? ['This channel name is already taken']
+              : null
+          })
+        })
+        .finally(() => (this.loading.personalInfo = false))
+
       if (!user) return
       if (
         this.formData.channelName !==
@@ -263,7 +266,7 @@ export default {
         this.$store.dispatch('signOut')
         this.$router.push('/signin')
       }
-      this.loading.personalInfo = false
+
       this.closeModal()
     },
     async submitPassword() {
@@ -274,31 +277,32 @@ export default {
       const user = await AuthenticationService.updatePassword({
         currentPassword: this.formData.currentPassword,
         newPassword: this.formData.newPassword
-      }).catch((err) => {
-        this.loading.password = false
-        const errors = err.response.data.error
-
-        this.$refs.passwordForm.setErrors({
-          'Current password': errors.find((error) => {
-            return error.field === 'currentPassword'
-          })
-            ? ['Current password is incorrect']
-            : null,
-          'New password': errors.find((error) => {
-            return error.field === 'newPassword'
-          })
-            ? errors.find((error) => {
-                return error.field === 'newPassword'
-              }).message
-            : null
-        })
       })
+        .catch((err) => {
+          this.loading.password = false
+          const errors = err.response.data.error
+
+          this.$refs.passwordForm.setErrors({
+            'Current password': errors.find((error) => {
+              return error.field === 'currentPassword'
+            })
+              ? ['Current password is incorrect']
+              : null,
+            'New password': errors.find((error) => {
+              return error.field === 'newPassword'
+            })
+              ? errors.find((error) => {
+                  return error.field === 'newPassword'
+                }).message
+              : null
+          })
+        })
+        .finally(() => (this.loading.password = false))
       if (!user) return
 
       this.formData.currentPassword = ''
       this.formData.newPassword = ''
       this.closeModal()
-      this.loading.password = false
 
       this.$store.dispatch('signOut')
       this.$router.push('/signin')

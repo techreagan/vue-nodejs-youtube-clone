@@ -1,8 +1,8 @@
 import Api from '@/services/Api'
 
 export default {
-  getAll() {
-    return Api().get(`videos/public`)
+  getAll(data) {
+    return Api().get(`videos/${data}`)
   },
   createUser(data) {
     return Api().post('users', data)
@@ -11,6 +11,6 @@ export default {
     return Api().put(`users/${id}`, data)
   },
   deleteById(id) {
-    return Api().delete(`users/${id}`)
+    return Api().delete(`videos/${id}`)
   }
 }

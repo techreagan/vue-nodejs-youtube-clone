@@ -34,6 +34,16 @@
               :loading="loading"
               loading-text="Loading... Please wait"
             >
+              <template v-slot:item.feelings="{ item }">
+                <span class="mr-3"
+                  ><v-icon small class="pr-1">mdi-thumb-up</v-icon
+                  >{{ item.likes }}</span
+                >
+                <span
+                  ><v-icon small class="pr-1">mdi-thumb-down</v-icon
+                  >{{ item.dislikes }}</span
+                >
+              </template>
               <template v-slot:top>
                 <v-dialog v-model="dialogDelete" persistent max-width="500px">
                   <v-card>
@@ -60,14 +70,16 @@
                                   class="pl-2 subtitle-1 font-weight-bold"
                                   style="line-height: 1"
                                 >
-                                  {{ itemToDelete.name }}
+                                  {{ itemToDelete.title }}
                                 </v-card-title>
 
                                 <v-card-subtitle
                                   class="pl-2 pt-2 pb-0"
                                   style="line-height: 1"
                                 >
-                                  Published Apr 20, 2020 <br />
+                                  Published
+                                  {{ dateFormatter(itemToDelete.createdAt) }}
+                                  <br />
                                   {{ itemToDelete.views }} views
                                 </v-card-subtitle>
                               </div>
@@ -86,7 +98,11 @@
                         >Cancel</v-btn
                       >
 
-                      <v-btn color="blue darken-1" text @click="deleteItem"
+                      <v-btn
+                        :loading="deleteBtnLoading"
+                        color="blue darken-1"
+                        text
+                        @click="deleteItem"
                         >Delete Forever</v-btn
                       >
                     </v-card-actions>
@@ -99,7 +115,14 @@
                     mdi-pencil
                   </v-icon>
                 </v-btn>
-                <v-btn icon href text class="mr-2" router to="/watch/123">
+                <v-btn
+                  icon
+                  href
+                  text
+                  class="mr-2"
+                  router
+                  :to="`/watch/${item._id}`"
+                >
                   <v-icon>
                     mdi-youtube
                   </v-icon>
@@ -124,9 +147,12 @@
 </template>
 
 <script>
+import VideoService from '@/services/VideoService'
+import moment from 'moment'
 export default {
   data: () => ({
-    loading: true,
+    loading: false,
+    deleteBtnLoading: false,
     dialogDelete: false,
     tab: null,
     search: '',
@@ -134,19 +160,31 @@ export default {
       {
         text: 'Video',
         align: 'start',
-        value: 'name'
+        value: 'title'
       },
-      { text: 'Visibility', value: 'visibility' },
-      { text: 'Restrictions', value: 'restrictions' },
+      { text: 'Visibility', value: 'status' },
       { text: 'Views', value: 'views' },
       { text: 'Comments', value: 'comments' },
-      { text: 'Likes (vs. dislikes)', value: 'likes (vs. dislikes)' },
+      { text: 'Likes (vs. dislikes)', value: 'feelings' },
       { text: 'Actions', value: 'actions', sortable: false }
     ],
     videos: [],
     itemToDelete: {}
   }),
   methods: {
+    async getVideos() {
+      this.loading = true
+
+      const videos = await VideoService.getAll('private')
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => (this.loading = false))
+
+      if (!videos) return
+      // console.log(videos)
+      this.videos = videos.data.data
+    },
     editItem(item) {
       this.$router.push({ name: `Detail`, params: { id: item.id } })
     },
@@ -154,46 +192,57 @@ export default {
       this.dialogDelete = true
       this.itemToDelete = item
     },
-    deleteItem() {
-      this.dialogDelete = false
-      this.videos = this.videos.filter(
-        (video) => this.itemToDelete.id !== video.id
-      )
+    async deleteItem() {
+      this.deleteBtnLoading = true
+      await VideoService.deleteById(this.itemToDelete._id)
+        .catch((err) => console.log(err))
+        .finally(() => {
+          this.videos = this.videos.filter(
+            (video) => this.itemToDelete.id !== video.id
+          )
+          this.deleteBtnLoading = false
+          this.dialogDelete = false
+          this.itemToDelete = {}
+        })
+    },
+    dateFormatter(date) {
+      return moment(date).fromNow()
     }
   },
   mounted() {
-    setTimeout(() => {
-      this.loading = false
-      this.videos = [
-        {
-          'name': 'Day 44',
-          'visibility': 'public',
-          'restrictions': 'none',
-          'views': 10,
-          'comments': 5,
-          'likes (vs. dislikes)': 10,
-          'id': 12233
-        },
-        {
-          'name': 'Day 45',
-          'visibility': 'public',
-          'restrictions': 'none',
-          'views': 13,
-          'comments': 15,
-          'likes (vs. dislikes)': 20,
-          'id': 12234
-        },
-        {
-          'name': 'Day 46',
-          'visibility': 'public',
-          'restrictions': 'none',
-          'views': 10,
-          'comments': 45,
-          'likes (vs. dislikes)': 60,
-          'id': 122133
-        }
-      ]
-    }, 2000)
+    this.getVideos()
+    // setTimeout(() => {
+    //   this.loading = false
+    //   this.videos = [
+    //     {
+    //       'name': 'Day 44',
+    //       'visibility': 'public',
+    //       'restrictions': 'none',
+    //       'views': 10,
+    //       'comments': 5,
+    //       'likes (vs. dislikes)': 10,
+    //       'id': 12233
+    //     },
+    //     {
+    //       'name': 'Day 45',
+    //       'visibility': 'public',
+    //       'restrictions': 'none',
+    //       'views': 13,
+    //       'comments': 15,
+    //       'likes (vs. dislikes)': 20,
+    //       'id': 12234
+    //     },
+    //     {
+    //       'name': 'Day 46',
+    //       'visibility': 'public',
+    //       'restrictions': 'none',
+    //       'views': 10,
+    //       'comments': 45,
+    //       'likes (vs. dislikes)': 60,
+    //       'id': 122133
+    //     }
+    //   ]
+    // }, 2000)
   }
 }
 </script>
