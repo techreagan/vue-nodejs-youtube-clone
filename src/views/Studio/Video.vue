@@ -143,6 +143,12 @@
     </v-tabs-items>
     <!-- </v-row> -->
     <!-- </v-container> -->
+    <v-snackbar v-model="snackbar">
+      Video deleted successfully
+      <v-btn color="white" text @click="snackbar = false" icon>
+        <v-icon>mdi-close-circle</v-icon>
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -153,6 +159,7 @@ export default {
   data: () => ({
     loading: false,
     deleteBtnLoading: false,
+    snackbar: false,
     dialogDelete: false,
     tab: null,
     search: '',
@@ -203,6 +210,7 @@ export default {
           this.deleteBtnLoading = false
           this.dialogDelete = false
           this.itemToDelete = {}
+          this.snackbar = true
         })
     },
     dateFormatter(date) {
