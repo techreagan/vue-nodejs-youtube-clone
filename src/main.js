@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import { required, email, max, min } from 'vee-validate/dist/rules'
+import { required, email, max, min, size } from 'vee-validate/dist/rules'
 import {
   extend,
   ValidationObserver,
@@ -42,6 +42,11 @@ extend('password', {
   message: 'Password does not match'
 })
 
+extend('size', {
+  ...size,
+  message: 'video size should be less than 5 MB!'
+})
+
 Vue.config.productionTip = false
 Vue.component('ValidationProvider', ValidationProvider)
 Vue.component('ValidationObserver', ValidationObserver)
@@ -52,5 +57,5 @@ new Vue({
   router,
   store,
   vuetify,
-  render: h => h(App)
+  render: (h) => h(App)
 }).$mount('#app')

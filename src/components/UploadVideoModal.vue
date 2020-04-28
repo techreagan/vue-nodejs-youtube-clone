@@ -43,6 +43,7 @@
           >
             <v-file-input
               @change="uploadVideo"
+              v-model="selectedFile"
               accept="video/mp4"
               placeholder="Pick an video"
               prepend-icon="mdi-video"
@@ -151,7 +152,13 @@
                 </ValidationProvider>
 
                 <div class="mt-6 d-flex justify-space-between">
-                  <v-btn type="submit" class="primary" depressed>Submit</v-btn>
+                  <v-btn
+                    :loading="submitLoading"
+                    type="submit"
+                    class="primary"
+                    depressed
+                    >Submit</v-btn
+                  >
                 </div>
               </form>
             </ValidationObserver>
@@ -203,6 +210,7 @@
 
 <script>
 import myUpload from 'vue-image-crop-upload'
+import VideoService from '@/services/VideoService'
 export default {
   name: 'UploadModal',
   props: ['openDialog'],
@@ -212,6 +220,7 @@ export default {
       valid: false,
       uploaded: false,
       uploading: false,
+      submitLoading: false,
       interval: {},
       value: 0,
       show: false,
@@ -223,7 +232,9 @@ export default {
       ],
       categories: ['People', 'Technology', 'Fashion'],
       visibilty: ['Public', 'Private'],
+      selectedFile: [],
       formData: {
+        id: '',
         title: '',
         description: '',
         category: '',
@@ -249,23 +260,61 @@ export default {
       const { valid } = await this.$refs.provider.validate(e)
 
       if (!valid) return
-      // TODO: Upload the file
+      // console.log(this.selectedFile)
+
       this.uploading = true
-      this.interval = setInterval(() => {
-        if (this.value === 100) {
-          this.uploaded = true
-          clearInterval(this.interval)
+      const fd = new FormData()
+      fd.append('video', this.selectedFile, this.selectedFile.name)
+
+      let video = await VideoService.uploadVideo(fd, {
+        onUploadProgress: (uploadEvent) => {
+          this.value = Math.round(
+            (uploadEvent.loaded / uploadEvent.total) * 100
+          )
         }
-        this.value += 10
-      }, 1000)
+      })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => (this.uploaded = true))
+
+      if (!video) return
+      video = video.data.data
+
+      this.formData.id = video._id
+      this.formData.title = video.title
+      this.formData.description = video.description
+      this.formData.cateogry = video.cateogry
+
+      // this.interval = setInterval(() => {
+      //   if (this.value === 100) {
+      //     this.uploaded = true
+      //     clearInterval(this.inte-rval)
+      //   }
+      //   this.value += 10
+      // }, 1000)
       // }
       // }
     },
-    submit() {
-      if (this.$route.name === 'Dashboard')
-        return this.$router.push('/studio/videos')
-      console.log('submittied')
+    async submit() {
+      // if (this.$route.name === 'Dashboard')
+      this.submitLoading = true
+      const video = await VideoService.updateVideo(this.formData.id, {
+        title: this.formData.title,
+        description: this.formData.description,
+        category: this.formData.category.toLowerCase(),
+        status: this.formData.visibilty.toLowerCase()
+      })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => (this.submitLoading = false))
+
+      if (!video) return
+
       this.closeModal()
+      this.$router.push('/studio/videos')
+      // console.log('submittied')
     },
     closeModal() {
       this.$emit('closeDialog')

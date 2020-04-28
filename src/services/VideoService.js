@@ -4,11 +4,11 @@ export default {
   getAll(data) {
     return Api().get(`videos/${data}`)
   },
-  createUser(data) {
-    return Api().post('users', data)
+  uploadVideo(data, optional) {
+    return Api().post('videos', data, optional)
   },
-  updateUser(data, id) {
-    return Api().put(`users/${id}`, data)
+  updateVideo(id, data) {
+    return Api().put(`videos/${id}`, data)
   },
   deleteById(id) {
     return Api().delete(`videos/${id}`)
