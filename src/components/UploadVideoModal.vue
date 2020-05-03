@@ -143,11 +143,12 @@
                   rules="required|min:3"
                 >
                   <v-select
-                    :items="categories"
+                    :items="categoriesTitles"
                     :error-messages="errors"
                     filled
                     label="Categories"
                     v-model="formData.category"
+                    :loading="categoryLoading"
                   ></v-select>
                 </ValidationProvider>
 
@@ -173,12 +174,13 @@
           >
             <v-btn text @click="toggleShow">Upload Thumbnails</v-btn>
             <my-upload
-              field="img"
+              field="thumbnail"
               @crop-success="cropSuccess"
+              method="PUT"
               v-model="show"
               :width="400"
               :height="400"
-              :params="params"
+              :url="url"
               :headers="headers"
               img-format="jpg"
               langType="en"
@@ -194,6 +196,9 @@
                 :src="imgDataUrl"
               ></v-img>
             </v-responsive>
+            <p v-if="imgDataUrl == ''" class="red--text">
+              Please upload thumbnail
+            </p>
           </v-col>
         </v-row>
       </v-card-text>
@@ -211,6 +216,7 @@
 <script>
 import myUpload from 'vue-image-crop-upload'
 import VideoService from '@/services/VideoService'
+import CategoryService from '@/services/CategoryService'
 export default {
   name: 'UploadModal',
   props: ['openDialog'],
@@ -221,6 +227,7 @@ export default {
       uploaded: false,
       uploading: false,
       submitLoading: false,
+      categoryLoading: false,
       interval: {},
       value: 0,
       show: false,
@@ -230,7 +237,8 @@ export default {
           value.size < 5000000 ||
           'Video size should be less than 5 MB!'
       ],
-      categories: ['People', 'Technology', 'Fashion'],
+      categoriesTitles: [],
+      categories: [],
       visibilty: ['Public', 'Private'],
       selectedFile: [],
       formData: {
@@ -241,13 +249,8 @@ export default {
         visibilty: ''
       },
       imgDataUrl: '',
-      params: {
-        token: '123456798',
-        name: 'avatar'
-      },
-      headers: {
-        smail: '*_~'
-      }
+      url: '',
+      headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
     }
   },
   computed: {
@@ -285,7 +288,7 @@ export default {
       this.formData.title = video.title
       this.formData.description = video.description
       this.formData.cateogry = video.cateogry
-
+      this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`
       // this.interval = setInterval(() => {
       //   if (this.value === 100) {
       //     this.uploaded = true
@@ -297,12 +300,16 @@ export default {
       // }
     },
     async submit() {
-      // if (this.$route.name === 'Dashboard')
+      if (this.imgDataUrl == '') return
       this.submitLoading = true
+      this.formData.category = this.categories.find(
+        (category) => category.title === this.formData.category
+      )._id
+
       const video = await VideoService.updateVideo(this.formData.id, {
         title: this.formData.title,
         description: this.formData.description,
-        category: this.formData.category.toLowerCase(),
+        categoryId: this.formData.category,
         status: this.formData.visibilty.toLowerCase()
       })
         .catch((err) => {
@@ -315,6 +322,19 @@ export default {
       this.closeModal()
       this.$router.push('/studio/videos')
       // console.log('submittied')
+    },
+    async getCategories() {
+      this.categoryLoading = true
+      const categories = await CategoryService.getAll()
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => (this.categoryLoading = false))
+
+      this.categoriesTitles = categories.data.data.map((category) => {
+        return category.title
+      })
+      this.categories = categories.data.data
     },
     closeModal() {
       this.$emit('closeDialog')
@@ -333,6 +353,9 @@ export default {
   },
   components: {
     myUpload
+  },
+  mounted() {
+    this.getCategories()
   }
 }
 </script>

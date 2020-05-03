@@ -147,16 +147,15 @@
             <my-upload
               field="avatar"
               method="PUT"
-              :headers="{ Authorization: `Bearer ${$store.getters.getToken}` }"
+              :headers="headers"
               @crop-success="cropSuccess"
               @crop-upload-success="cropUploadSuccess"
               @crop-upload-fail="cropUploadFail"
               v-model="show"
-              url="http://localhost:3001/api/v1/auth/avatar"
+              :url="url"
               :width="200"
               :height="200"
               :noRotate="false"
-              :params="params"
               img-format="jpg"
               langType="en"
             ></my-upload>
@@ -214,14 +213,9 @@ export default {
         personalInfo: false,
         password: false
       },
-      imgDataUrl: `http://localhost:3001/uploads/avatars/${this.$store.getters.currentUser.photoUrl}`,
-      params: {
-        token: '123456798',
-        name: 'avatar'
-      },
-      headers: {
-        smail: '*_~'
-      }
+      imgDataUrl: `${process.env.VUE_APP_URL}/uploads/avatars/${this.$store.getters.currentUser.photoUrl}`,
+      url: `${process.env.VUE_APP_URL}/api/v1/auth/avatar`,
+      headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
     }
   },
   computed: {
@@ -315,15 +309,15 @@ export default {
       this.show = !this.show
     },
     cropSuccess(imgDataUrl, field) {
-      console.log('-------- crop success --------')
-      // console.log(field)
+      // console.log('-------- crop success --------')
+      console.log(field)
       // console.log(imgDataUrl)
       this.imgDataUrl = imgDataUrl
       // console.log(this.imgDataUrl)
-      console.log(field)
+      // console.log(field)
     },
     cropUploadSuccess(jsonData, field) {
-      console.log('-------- upload success --------')
+      // console.log('-------- upload success --------')
       const user = this.$store.getters.currentUser
       user.photoUrl = jsonData.data
       this.$store.dispatch('signin', user)
@@ -338,9 +332,6 @@ export default {
   },
   components: {
     myUpload
-  },
-  mounted() {
-    // console.log(this.$store.getters.currentUser)
   }
 }
 </script>

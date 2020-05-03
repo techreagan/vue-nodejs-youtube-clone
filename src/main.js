@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import { required, email, max, min, size } from 'vee-validate/dist/rules'
+import { required, email, max, min, size, oneOf } from 'vee-validate/dist/rules'
 import {
   extend,
   ValidationObserver,
@@ -17,6 +17,10 @@ setInteractionMode('eager')
 extend('required', {
   ...required,
   message: 'Enter {_field_}'
+})
+
+extend('oneOf', {
+  ...oneOf
 })
 
 extend('max', {

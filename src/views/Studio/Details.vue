@@ -16,6 +16,7 @@
                 rules="required|min:3"
               >
                 <v-text-field
+                  :loading="inputLoading"
                   v-model="formData.title"
                   :error-messages="errors"
                   label="Title (required)"
@@ -32,6 +33,7 @@
                 rules="required|min:3"
               >
                 <v-textarea
+                  :loading="inputLoading"
                   filled
                   auto-grow
                   :error-messages="errors"
@@ -47,14 +49,16 @@
               <ValidationProvider
                 v-slot="{ errors }"
                 name="Visibilty"
-                rules="required|min:3"
+                rules="required|oneOf:private,public"
               >
                 <v-select
-                  :items="visibilty"
+                  :loading="inputLoading"
+                  :items="visibility"
                   :error-messages="errors"
                   filled
                   label="Visibilty"
-                  v-model="formData.visibilty"
+                  :value="formData.visibility"
+                  v-model="formData.visibility"
                 ></v-select>
               </ValidationProvider>
               <ValidationProvider
@@ -63,7 +67,8 @@
                 rules="required|min:3"
               >
                 <v-select
-                  :items="categories"
+                  :loading="categoryLoading"
+                  :items="categoriesTitles"
                   :error-messages="errors"
                   filled
                   label="Categories"
@@ -72,7 +77,13 @@
               </ValidationProvider>
 
               <div class="mt-6 d-flex justify-space-between">
-                <v-btn type="submit" class="primary" depressed>Submit</v-btn>
+                <v-btn
+                  :loading="submitLoading"
+                  type="submit"
+                  class="primary"
+                  depressed
+                  >Submit</v-btn
+                >
               </div>
             </form>
           </ValidationObserver>
@@ -80,12 +91,13 @@
         <v-col cols="4" class="text-center">
           <v-btn text @click="toggleShow">Upload Thumbnails</v-btn>
           <my-upload
-            field="img"
+            field="thumbnail"
             @crop-success="cropSuccess"
+            method="PUT"
             v-model="show"
             :width="400"
             :height="400"
-            :params="params"
+            :url="url"
             :headers="headers"
             img-format="jpg"
             langType="en"
@@ -104,15 +116,17 @@
 
 <script>
 import myUpload from 'vue-image-crop-upload'
+import VideoService from '@/services/VideoService'
+import CategoryService from '@/services/CategoryService'
+
 export default {
   name: 'Details',
   data() {
     return {
       // dialog: this.openDialog ? this.openDialog : false,
-      valid: false,
-      uploaded: false,
-      uploading: false,
-      interval: {},
+      inputLoading: false,
+      submitLoading: false,
+      categoryLoading: false,
       value: 0,
       show: false,
       rules: [
@@ -121,28 +135,77 @@ export default {
           value.size < 5000000 ||
           'Video size should be less than 5 MB!'
       ],
-      categories: ['People', 'Technology', 'Fashion'],
-      visibilty: ['Public', 'Private'],
+      categoriesTitles: [],
+      categories: [],
+      visibility: ['public', 'private'],
       formData: {
         title: '',
         description: '',
         category: '',
-        visibilty: ''
+        visibility: ''
       },
-      imgDataUrl: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
-      params: {
-        token: '123456798',
-        name: 'avatar'
-      },
-      headers: {
-        smail: '*_~'
-      }
+      // imgDataUrl: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
+
+      imgDataUrl: '',
+      url: '',
+      headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
     }
   },
   methods: {
-    submit() {
-      console.log('submittied')
-      this.closeModal()
+    async getVideo() {
+      this.inputLoading = true
+      let video = await VideoService.getById(this.$route.params.id)
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.inputLoading = false
+        })
+
+      if (!video) return
+      video = video.data.data
+      this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`
+
+      this.formData.title = video.title
+      this.formData.description = video.description
+      this.formData.visibility = video.status == 'draft' ? '' : video.status
+      this.formData.category = video.categoryId.title
+      this.imgDataUrl = `${process.env.VUE_APP_URL}/uploads/thumbnails/${video.thumbnailUrl}`
+    },
+    async submit() {
+      // if (this.$route.name === 'Dashboard')
+      this.submitLoading = true
+      this.formData.category = this.categories.find(
+        (category) => category.title === this.formData.category
+      )._id
+      const video = await VideoService.updateVideo(this.$route.params.id, {
+        title: this.formData.title,
+        description: this.formData.description,
+        categoryId: this.formData.category,
+        status: this.formData.visibility.toLowerCase()
+      })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => (this.submitLoading = false))
+
+      if (!video) return
+
+      this.$router.push('/studio/videos')
+      // console.log('submittied')
+    },
+    async getCategories() {
+      this.categoryLoading = true
+      const categories = await CategoryService.getAll()
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => (this.categoryLoading = false))
+
+      this.categoriesTitles = categories.data.data.map((category) => {
+        return category.title
+      })
+      this.categories = categories.data.data
     },
     toggleShow() {
       this.show = !this.show
@@ -156,7 +219,10 @@ export default {
   components: {
     myUpload
   },
-  mounted() {}
+  mounted() {
+    this.getVideo()
+    this.getCategories()
+  }
 }
 </script>
 
