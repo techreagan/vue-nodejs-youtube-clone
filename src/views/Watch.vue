@@ -5,211 +5,124 @@
         <v-col cols="11" class="mx-auto">
           <v-row>
             <v-col cols="12" sm="12" md="8" lg="8">
+              <!-- <component
+                :is="transition !== 'None' ? `v-${transition}` : 'div'"
+                hide-on-leave
+              > -->
               <v-skeleton-loader
                 type="card-avatar, article, actions"
                 :loading="videoLoading"
                 tile
                 large
               >
-                <v-responsive>
-                  <video controls>
-                    <source :src="video.videoUrl" type="video/mp4" />
-                  </video>
-                </v-responsive>
-                <v-card flat tile class="card">
-                  <v-card-title class="pl-0 pb-0">{{
-                    video.title
-                  }}</v-card-title>
-                  <div class="d-flex flex-wrap justify-space-between" id="btns">
-                    <v-card-subtitle
-                      class="pl-0 pt-0 pb-0 subtitle-1"
-                      style="line-height: 2.4em;"
+                <div>
+                  <v-responsive max-height="450">
+                    <video controls style="height: 100%; width: 100%">
+                      <source
+                        :src="`${url}/uploads/videos/${video.url}`"
+                        type="video/mp4"
+                      />
+                    </video>
+                  </v-responsive>
+                  <!-- </div> -->
+                  <v-card flat tile class="card">
+                    <v-card-title class="pl-0 pb-0">{{
+                      video.title
+                    }}</v-card-title>
+                    <div
+                      class="d-flex flex-wrap justify-space-between"
+                      id="btns"
                     >
-                      {{ video.views }} views<v-icon>mdi-circle-small</v-icon
-                      >{{ video.createdAt }}
-                    </v-card-subtitle>
-                    <v-card-actions class="pt-0 pl-0 grey--text">
-                      <v-btn text
-                        ><v-icon class="pr-2">mdi-thumb-up</v-icon> 1.5k</v-btn
+                      <v-card-subtitle
+                        class="pl-0 pt-0 pb-0 subtitle-1"
+                        style="line-height: 2.4em;"
                       >
-                      <v-btn text
-                        ><v-icon class="pr-2">mdi-thumb-down</v-icon>
-                        1.5k</v-btn
-                      >
-                      <v-btn text><v-icon>mdi-share</v-icon> Share</v-btn>
-                      <v-btn text
-                        ><v-icon>mdi-playlist-plus</v-icon> Save</v-btn
-                      >
-                    </v-card-actions>
-                  </div>
-                </v-card>
-
-                <v-row class="justify-space-between">
-                  <v-col cols="6" sm="6" md="5" lg="5">
-                    <v-card class="transparent" flat>
-                      <v-list-item three-line>
-                        <v-list-item-avatar size="50"
-                          ><v-img
-                            src="https://randomuser.me/api/portraits/men/1.jpg"
-                          ></v-img
-                        ></v-list-item-avatar>
-                        <v-list-item-content class="align-self-auto">
-                          <v-list-item-title class="font-weight-medium mb-1"
-                            >Tech Reagan</v-list-item-title
-                          >
-                          <v-list-item-subtitle
-                            >{{ video.subscribers }} subscribers
-                          </v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="6" sm="6" md="4" lg="4">
-                    <div class="d-flex justify-end align-center">
-                      <v-btn class="red white--text mt-6" tile large depressed
-                        >Subscribed</v-btn
-                      >
-                      <v-btn icon class="ml-5 mt-6"
-                        ><v-icon>mdi-bell</v-icon></v-btn
-                      >
+                        {{ video.views }} views<v-icon>mdi-circle-small</v-icon
+                        >{{ dateFormatter(video.createdAt) }}
+                      </v-card-subtitle>
+                      <v-card-actions class="pt-0 pl-0 grey--text">
+                        <v-btn text
+                          ><v-icon class="pr-2">mdi-thumb-up</v-icon
+                          >{{ video.likes }}</v-btn
+                        >
+                        <v-btn text
+                          ><v-icon class="pr-2">mdi-thumb-down</v-icon>
+                          {{ video.dislikes }}</v-btn
+                        >
+                        <v-btn text><v-icon>mdi-share</v-icon> Share</v-btn>
+                        <v-btn text
+                          ><v-icon>mdi-playlist-plus</v-icon> Save</v-btn
+                        >
+                      </v-card-actions>
                     </div>
-                  </v-col>
-                  <v-col class="pl-11" offset="1" cols="11" md="11">
-                    <p>
-                      {{
-                        truncate
-                          ? truncateText(video.description, 150)
-                          : video.description
-                      }}
-                    </p>
-                    <v-btn text @click="show" class="remove-hover-bg"
-                      >Show More</v-btn
-                    >
-                  </v-col>
-                  <v-col>
-                    <p class="mb-0">148 Comments</p>
-                    <input type="text" ref="hello" />
-                    <v-card class="transparent" flat>
-                      <v-list-item three-line class="pl-0">
-                        <v-list-item-avatar size="50"
-                          ><v-img
-                            src="https://randomuser.me/api/portraits/men/1.jpg"
-                          ></v-img
-                        ></v-list-item-avatar>
-                        <v-list-item-content class="align-self-auto">
-                          <v-text-field
-                            v-model="comment"
-                            placeholder="Add a public comment..."
-                            @click="showCommentBtns = true"
-                          >
-                          </v-text-field>
-                          <div
-                            v-if="showCommentBtns"
-                            class="d-inline-block text-right"
-                          >
-                            <v-btn
-                              text
-                              @click="showCommentBtns = !showCommentBtns"
-                              >Cancel</v-btn
-                            >
-                            <v-btn
-                              class="blue darken-3 white--text"
-                              depressed
-                              tile
-                              :disabled="comment === ''"
-                              >Comment</v-btn
-                            >
-                          </div>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-card>
+                  </v-card>
 
-                    <v-card class="transparent" flat v-for="i in 5" :key="i">
-                      <v-list-item three-line class="pl-0 mt-2">
-                        <v-list-item-avatar size="50"
-                          ><v-img
-                            src="https://randomuser.me/api/portraits/men/1.jpg"
-                          ></v-img
-                        ></v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-list-item-title
-                            class="font-weight-medium caption mb-1"
-                            >Tech Reagan
-                            <span class="font-weight-light grey--text">
-                              1 day ago</span
-                            ></v-list-item-title
+                  <v-row class="justify-space-between">
+                    <v-col cols="6" sm="6" md="5" lg="5">
+                      <v-card class="transparent" flat>
+                        <v-list-item three-line>
+                          <v-list-item-avatar
+                            v-if="typeof video.userId !== 'undefined'"
+                            size="50"
                           >
-                          <v-list-item-subtitle
-                            class="black--text text--darken-4 caption"
-                            >Lorem ipsum, dolor sit amet consectetur adipisicing
-                            elit. Tempore deleniti aspernatur nostrum eius
-                            dignissimos repellendus. Fugiat, aspernatur deserunt
-                            iusto natus consectetur voluptatem voluptate
-                            laboriosam pariatur qui animi repudiandae quae
-                            dolorem.</v-list-item-subtitle
+                            <!-- <v-img :src="video.userId.photoUrl"></v-img> -->
+                            <v-img
+                              :src="
+                                `${url}/uploads/avatars/${video.userId.photoUrl}`
+                              "
+                            ></v-img>
+                            <!-- src="https://randomuser.me/api/portraits/men/1.jpg" -->
+                          </v-list-item-avatar>
+                          <v-list-item-content
+                            v-if="video.userId"
+                            class="align-self-auto"
                           >
-                          <!-- <v-list-item-action> -->
-                          <div>
-                            <!-- <button
-                              class="caption font-weight-bold d-inline-block pa-2 grey--text text--darken-3"
-                              style="cursor: pointer; outline: none"
-                              @click.stop.prevent="showReply"
+                            <v-list-item-title
+                              class="font-weight-medium mb-1"
+                              >{{ video.userId.channelName }}</v-list-item-title
                             >
-                              REPLY
-                            </button> -->
-                            <v-btn
-                              text
-                              small
-                              :ripple="false"
-                              @click.stop="showReply(`${'reply' + i}`)"
-                              >Reply</v-btn
-                            >
-                          </div>
-                          <div class="d-none" :ref="`${'reply' + i}`">
-                            <v-list-item three-line class="pl-0">
-                              <v-list-item-avatar class="mt-0" size="40"
-                                ><v-img
-                                  src="https://randomuser.me/api/portraits/men/1.jpg"
-                                ></v-img
-                              ></v-list-item-avatar>
-                              <v-list-item-content
-                                class="align-self-auto mt-0 pt-0"
-                              >
-                                <v-form :ref="`form${i}`">
-                                  <v-text-field
-                                    :ref="`${'input' + i}`"
-                                    class="pt-0 mt-0 body-2"
-                                    placeholder="Add a public comment..."
-                                    :value="repliesInput[`input${i}`]"
-                                  >
-                                  </v-text-field>
-                                </v-form>
-                                <div
-                                  :ref="i + 'btns'"
-                                  class="d-inline-block text-right"
-                                >
-                                  <v-btn text @click="hideReply(i)" small
-                                    >Cancel</v-btn
-                                  >
-                                  <v-btn
-                                    class="blue darken-3 white--text"
-                                    depressed
-                                    tile
-                                    small
-                                    @click="addReply(i)"
-                                    >Reply</v-btn
-                                  >
-                                </div>
-                              </v-list-item-content>
-                            </v-list-item>
-                            <!-- </v-list-item-action> -->
-                          </div>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-card>
-                  </v-col>
-                </v-row>
+                            <v-list-item-subtitle
+                              >{{ video.userId.subscribers }} subscribers
+                            </v-list-item-subtitle>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </v-card>
+                    </v-col>
+                    <v-col cols="6" sm="6" md="4" lg="4">
+                      <div class="d-flex justify-end align-center">
+                        <v-btn class="red white--text mt-6" tile large depressed
+                          >Subscribed</v-btn
+                        >
+                        <v-btn icon class="ml-5 mt-6"
+                          ><v-icon>mdi-bell</v-icon></v-btn
+                        >
+                      </div>
+                    </v-col>
+                    <v-col class="pl-11" offset="1" cols="11" md="11">
+                      <p>
+                        {{
+                          truncate
+                            ? truncateText(video.description, 150)
+                            : video.description
+                        }}
+                      </p>
+                      <v-btn text @click="show" class="remove-hover-bg"
+                        >Show More</v-btn
+                      >
+                    </v-col>
+                  </v-row>
+                </div>
+                <!-- </component> -->
               </v-skeleton-loader>
+
+              <v-row>
+                <v-col v-if="video && video.status === 'public'">
+                  <p class="mb-0">{{ video.comments }} Comments</p>
+
+                  <AddComment :videoId="video._id" />
+                  <CommentList :videoId="video._id" />
+                </v-col>
+              </v-row>
             </v-col>
 
             <v-col cols="12" sm="12" md="4" lg="4">
@@ -266,30 +179,55 @@
 </template>
 
 <script>
+import moment from 'moment'
+import VideoService from '@/services/VideoService'
+import AddComment from '@/components/comments/AddComment'
+import CommentList from '@/components/comments/CommentList'
 export default {
   data: () => ({
     loading: true,
     videoLoading: true,
-    video: [],
+    video: {},
     truncate: true,
-    comment: '',
-    showCommentBtns: false,
-    repliesInput: {}
+    url: process.env.VUE_APP_URL
+
+    // comment: '',
+    // showCommentBtns: false,
+    // repliesInput: {}
   }),
 
   methods: {
-    getVideos() {
-      this.video = {
-        channelName: 'Tech Reagan',
-        subscribers: '100k',
-        createdAt: '6 hours ago',
-        views: '200,459',
-        videoUrl: '/video.mp4',
-        title: 'Attendance Management System',
-        description:
-          'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Culpa vel inventore voluptatum reiciendis delectus quibusdam incidunt consequuntur, nostrum aperiam, natus quidem qui corrupti reprehenderit quaerat neque voluptatibus? Ullam, maiores temporibus!'
+    async getVideo() {
+      this.videoLoading = true
+      try {
+        const video = await VideoService.getById(this.$route.params.id)
+
+        if (!video) return this.$router.push('/')
+
+        // video.data.data.url = `${process.env.VUE_APP_URL}/uploads/videos/${video.data.data.url}`
+
+        // video.data.data.userId.photoUrl = `${process.env.VUE_APP_URL}/uploads/avatars/${video.data.data.userId.photoUrl}`
+        this.video = video.data.data
+      } catch (err) {
+        console.log(err)
+      } finally {
+        this.videoLoading = false
+        // if (this.video.url != '' && this.video.userId != '')
+        // this.videoLoading = false
       }
+      // console.log(video.data.data)
+      // this.videoLoading = false
+      // this.video.url =
+      // this.video.userId.photoUrl = `${process.env.VUE_APP_URL}/uploads/avatars/${this.video.userId.photoUrl}`
+      // console.log(this.video)
+      if (
+        this.video.userId._id.toString() !==
+          this.$store.getters.currentUser._id.toString() &&
+        this.video.status !== 'public'
+      )
+        return this.$router.push('/')
     },
+
     showReply(id) {
       this.$refs[id][0].classList.toggle('d-none')
     },
@@ -315,13 +253,20 @@ export default {
         return string
       }
       return string.slice(0, num)
+    },
+    dateFormatter(date) {
+      return moment(date).fromNow()
     }
   },
+  components: {
+    AddComment,
+    CommentList
+  },
   mounted() {
+    this.getVideo()
     setTimeout(() => {
       this.loading = false
-      this.videoLoading = false
-      this.getVideos()
+      // this.videoLoading = false
     }, 400)
   }
 }

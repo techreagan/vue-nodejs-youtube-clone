@@ -347,6 +347,10 @@ export default {
   },
   mounted() {
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
+    // console.log(this.$route.name)
+    this.drawer = this.$route.name === 'Watch' ? false : this.drawer
+  },
+  created() {
     this.drawer = this.$route.name === 'Watch' ? false : this.drawer
   }
 }

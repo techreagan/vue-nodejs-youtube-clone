@@ -94,7 +94,7 @@ export default {
   methods: {
     async getVideos() {
       this.loading = true
-      const videos = await VideoService.getAll()
+      const videos = await VideoService.getAll('public')
         .catch((err) => {
           console.log(err)
           this.errored = true
