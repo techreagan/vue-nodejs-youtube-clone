@@ -2,7 +2,21 @@
   <div id="watch">
     <v-container fluid>
       <v-row>
-        <v-col cols="11" class="mx-auto">
+        <v-alert prominent class="mx-auto" type="error" v-if="errored">
+          <v-row align="center">
+            <v-col class="grow">
+              <div class="title">Error!</div>
+              <div>
+                Something went wrong, but don’t fret — let’s give it another
+                shot.
+              </div>
+            </v-col>
+            <v-col class="shrink">
+              <v-btn @click="actions">Take action</v-btn>
+            </v-col>
+          </v-row>
+        </v-alert>
+        <v-col v-else cols="11" class="mx-auto">
           <v-row>
             <v-col cols="12" sm="12" md="8" lg="8">
               <!-- <component
@@ -119,8 +133,14 @@
                 <v-col v-if="video && video.status === 'public'">
                   <p class="mb-0">{{ video.comments }} Comments</p>
 
-                  <AddComment :videoId="video._id" />
-                  <CommentList :videoId="video._id" />
+                  <AddComment
+                    @videoCommentLength="video.comments++"
+                    :videoId="video._id"
+                  />
+                  <CommentList
+                    @videoCommentLength="video.comments--"
+                    :videoId="video._id"
+                  />
                 </v-col>
               </v-row>
             </v-col>
@@ -128,7 +148,11 @@
             <v-col cols="12" sm="12" md="4" lg="4">
               <hr class="grey--text" />
               <h4 class="mb-3 mt-3">Up next</h4>
-              <div v-for="i in 10" :key="i" class="mb-5">
+              <div
+                v-for="(video, i) in loading ? 5 : videos.data"
+                :key="i"
+                class="mb-5"
+              >
                 <v-skeleton-loader
                   class="mx-auto"
                   type="list-item-avatar-three-line"
@@ -136,13 +160,16 @@
                   tile
                   large
                 >
-                  <v-card class="card" tile flat>
+                  <v-card class="card" tile flat v-if="!loading">
                     <v-row no-gutters>
                       <v-col class="mx-auto" cols="3" sm="3" md="5" lg="5">
                         <!-- <v-responsive max-height="100%"> -->
                         <v-img
                           class="align-center"
-                          src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+                          height="110"
+                          :src="
+                            `${url}/uploads/thumbnails/${video.thumbnailUrl}`
+                          "
                         >
                         </v-img>
                         <!-- </v-responsive> -->
@@ -153,16 +180,18 @@
                             class="pl-2 pt-0 subtitle-1 font-weight-bold"
                             style="line-height: 1"
                           >
-                            Top western road trips
+                            {{ video.title }}
                           </v-card-title>
 
                           <v-card-subtitle
                             class="pl-2 pt-2 pb-0"
                             style="line-height: 1"
                           >
-                            Tech Reagan<br />
-                            9.6k views<v-icon>mdi-circle-small</v-icon>6 hours
-                            ago
+                            {{ video.userId.channelName }}<br />
+                            {{ video.views }} views<v-icon
+                              >mdi-circle-small</v-icon
+                            >
+                            {{ dateFormatter(video.createdAt) }}
                           </v-card-subtitle>
                         </div>
                       </v-col>
@@ -185,19 +214,18 @@ import AddComment from '@/components/comments/AddComment'
 import CommentList from '@/components/comments/CommentList'
 export default {
   data: () => ({
-    loading: true,
+    loading: false,
+    errored: false,
     videoLoading: true,
     video: {},
+    videos: [],
     truncate: true,
     url: process.env.VUE_APP_URL
-
-    // comment: '',
-    // showCommentBtns: false,
-    // repliesInput: {}
   }),
 
   methods: {
     async getVideo() {
+      this.errored = false
       this.videoLoading = true
       try {
         const video = await VideoService.getById(this.$route.params.id)
@@ -209,6 +237,7 @@ export default {
         // video.data.data.userId.photoUrl = `${process.env.VUE_APP_URL}/uploads/avatars/${video.data.data.userId.photoUrl}`
         this.video = video.data.data
       } catch (err) {
+        this.errored = true
         console.log(err)
       } finally {
         this.videoLoading = false
@@ -227,18 +256,35 @@ export default {
       )
         return this.$router.push('/')
     },
+    async getVideos() {
+      this.errored = false
+      this.loading = true
+      const videos = await VideoService.getAll('public')
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => (this.loading = false))
 
-    showReply(id) {
-      this.$refs[id][0].classList.toggle('d-none')
+      if (typeof videos === 'undefined') return
+
+      this.videos = videos.data
     },
-    hideReply(id) {
-      this.$refs[`form${id}`][0].reset()
-      this.$refs['reply' + id][0].classList.toggle('d-none')
+    actions() {
+      this.getVideo()
+      this.getVideos()
     },
-    addReply(id) {
-      this.$refs[`form${id}`][0].reset()
-      console.log(this.$refs[`input${id}`][0].$refs.input.value)
-    },
+    // showReply(id) {
+    //   this.$refs[id][0].classList.toggle('d-none')
+    // },
+    // hideReply(id) {
+    //   this.$refs[`form${id}`][0].reset()
+    //   this.$refs['reply' + id][0].classList.toggle('d-none')
+    // },
+    // addReply(id) {
+    //   this.$refs[`form${id}`][0].reset()
+    //   console.log(this.$refs[`input${id}`][0].$refs.input.value)
+    // },
     show(event) {
       if (event.target.innerText === 'SHOW MORE') {
         this.truncate = false
@@ -263,11 +309,7 @@ export default {
     CommentList
   },
   mounted() {
-    this.getVideo()
-    setTimeout(() => {
-      this.loading = false
-      // this.videoLoading = false
-    }, 400)
+    this.actions()
   }
 }
 </script>

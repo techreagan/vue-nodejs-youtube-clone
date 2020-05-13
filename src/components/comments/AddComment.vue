@@ -63,8 +63,11 @@ export default {
 
       if (!comment) return
       this.comment = ''
+      comment.data.data.replies = []
       comment.data.data.userId = this.$store.getters.currentUser
+
       this.$store.dispatch('addComment', comment.data.data)
+      this.$emit('videoCommentLength')
     }
   }
 }

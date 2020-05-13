@@ -99,7 +99,7 @@
                 <v-expansion-panel class="transparent elevation-0">
                   <v-expansion-panel-header
                     v-if="comment.replies && comment.replies.length > 0"
-                    class="blue--text text--darken-3"
+                    class="blue--text text--darken-4 py-0"
                     >{{
                       comment.replies.length
                     }}
@@ -187,7 +187,7 @@ export default {
   data: function() {
     return {
       repliesInput: {},
-      comments: [],
+      comments: this.$store.getters.getComments.data,
       index: -1,
       btnLoading: false,
       url: process.env.VUE_APP_URL,
@@ -207,18 +207,28 @@ export default {
 
       this.comments = this.$store.getters.getComments.data
       // this.loading = false
-      console.log(this.$store.getters.getComments.data)
+      // console.log(this.$store.getters.getComments.data)
     },
     async deleteComment(id) {
+      // this.$store.dispatch('deleteComment', id)
       this.comments = this.comments.filter(
         (comment) => comment._id.toString() !== id.toString()
       )
+
       this.snackbar = true
       await CommentService.deleteById(id).catch((err) => {
         console.log(err)
       })
+
+      await this.$store
+        .dispatch('setComments', this.videoId)
+        .catch((err) => console.log(err))
+      this.comments = this.$store.getters.getComments.data
+      this.$emit('videoCommentLength')
     },
     async addReply(event, id) {
+      if (this.$refs[`input${id}`][0].$refs.input.value == '') return
+
       this.btnLoading = true
       // console.log((event.target.loading = true))
       this.$refs[`form${id}`][0].reset()
@@ -231,11 +241,37 @@ export default {
         .catch((err) => {
           console.log(err)
         })
-        .finally(() => (this.btnLoading = false))
+        .finally(() => {
+          this.btnLoading = false
+          // this.$store.dispatch('setComments', this.videoId)
+        })
       reply.data.data.userId = this.$store.getters.currentUser
-      this.comments
-        .find((comment) => comment._id === id)
-        .replies.unshift(reply.data.data)
+      // this.$store.dispatch('addComment', reply.data.data)
+      // console.log(this.$store.getters.getComments.data)
+      let comment = this.comments.find(
+        (comment) => comment._id.toString() === id.toString()
+      )
+      // console.log(comment)
+      if (!comment.replies) {
+        // console.log('1')
+        // comment.replies = []
+        comment.replies.push(reply.data.data)
+      } else {
+        // console.log('2')
+        comment.replies.unshift(reply.data.data)
+        // this.comments
+        //   .find((comment) => comment._id === id)
+        //   .replies.unshift(reply.data.data)
+      }
+
+      // console.log(
+      //   this.$store.getters.getComments.data.find(
+      //     (comment) => comment._id === id
+      //   )
+      // )
+      // this.comments
+      //   .find((comment) => comment._id === id)
+      //   .replies.unshift(reply.data.data)
     },
     showReply(id) {
       this.$refs[id][0].classList.toggle('d-none')
@@ -248,6 +284,7 @@ export default {
       return moment(date).fromNow()
     }
   },
+
   mounted() {
     this.getComments()
   }

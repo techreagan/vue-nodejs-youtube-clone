@@ -17,62 +17,59 @@
 
       <main v-else>
         <h3 class="headline font-weight-medium">Recommended</h3>
-
         <v-row>
           <v-col
             cols="12"
             sm="6"
             md="4"
             lg="3"
-            v-for="(video, i) in loading ? 4 : videos.data"
+            v-for="(video, i) in loading ? 10 : videos.data"
             :key="i"
-            class="mx-auto"
+            class="mx-xs-auto"
           >
-            <v-skeleton-loader
-              class="mx-auto"
-              type="card-avatar"
-              :loading="loading"
+            <v-skeleton-loader type="card-avatar" :loading="loading">
+              <video-card
+                :card="{ maxWidth: 350 }"
+                :video="video"
+                :channel="video.userId"
+              ></video-card>
+              <!-- <v-card
+              class="content-bg card mx-auto"
+              max-width="350"
+              flat
+              tile
+              router
+              to="/watch/12"
             >
-              <v-card
-                class="content-bg card mx-auto"
-                max-width="350"
-                flat
-                tile
-                v-if="!loading"
-              >
-                <v-img
-                  src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                  height="200px"
-                ></v-img>
-                <v-row no-gutters>
-                  <v-col cols="2">
-                    <v-list-item class="pl-0 pt-3">
-                      <v-list-item-avatar color="grey darken-3">
-                        <v-img
-                          class="elevation-6"
-                          src="https://randomuser.me/api/portraits/men/1.jpg"
-                        ></v-img>
-                      </v-list-item-avatar>
-                    </v-list-item>
-                  </v-col>
-                  <v-col>
-                    <v-card-title
-                      class="pl-4 pt-3 subtitle-1 font-weight-bold"
-                      style="line-height: 1.1"
-                    >
-                      {{ video.title }}
-                    </v-card-title>
+              <v-img
+                src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+                height="200px"
+              ></v-img>
+              <v-row no-gutters>
+                <v-col cols="2">
+                  <v-list-item class="pl-0 pt-3" router to="/channels/12">
+                    <v-list-item-avatar color="grey darken-3">
+                      <v-img
+                        class="elevation-6"
+                        src="https://randomuser.me/api/portraits/men/1.jpg"
+                      ></v-img>
+                    </v-list-item-avatar>
+                  </v-list-item>
+                </v-col>
+                <v-col>
+                  <v-card-title class="pl-2 pt-3 subtitle-1 font-weight-bold">
+                    Top western road trips
+                  </v-card-title>
 
-                    <v-card-subtitle class="pl-4 pt-2 pb-0 text-l">
-                      {{ video.userId.channelName }}
-                    </v-card-subtitle>
-                    <v-card-subtitle class="pl-4 pt-0">
-                      {{ video.views }} views<v-icon>mdi-circle-small</v-icon
-                      >{{ dateFormatter(video.createdAt) }}
-                    </v-card-subtitle>
-                  </v-col>
-                </v-row>
-              </v-card>
+                  <v-card-subtitle class="pl-2 pb-0">
+                    1,000 miles of wonder
+                  </v-card-subtitle>
+                  <v-card-subtitle class="pl-2 pt-0">
+                    9.6k views<v-icon>mdi-circle-small</v-icon>6 hours ago
+                  </v-card-subtitle>
+                </v-col>
+              </v-row>
+            </v-card> -->
             </v-skeleton-loader>
           </v-col>
         </v-row>
@@ -82,6 +79,7 @@
 </template>
 
 <script>
+import VideoCard from '@/components/VideoCard'
 import VideoService from '@/services/VideoService'
 import moment from 'moment'
 export default {
@@ -108,6 +106,9 @@ export default {
     dateFormatter(date) {
       return moment(date).fromNow()
     }
+  },
+  components: {
+    VideoCard
   },
   mounted() {
     // setTimeout(() => {

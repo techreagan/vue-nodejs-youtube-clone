@@ -9,23 +9,29 @@
         <v-container class="py-0">
           <v-row class="justify-space-between">
             <v-col cols="12" sm="5" md="5" lg="5" offset-md="1">
-              <v-card class="transparent" flat>
-                <v-list-item three-line>
-                  <v-list-item-avatar size="80"
-                    ><v-img
-                      src="https://randomuser.me/api/portraits/men/1.jpg"
-                    ></v-img
-                  ></v-list-item-avatar>
-                  <v-list-item-content class="align-self-auto">
-                    <v-list-item-title class="headline mb-1"
-                      >Tech Reagan</v-list-item-title
-                    >
-                    <v-list-item-subtitle
-                      >1.06M subscribers
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card>
+              <v-skeleton-loader
+                type="list-item-avatar-two-line"
+                :loading="loading"
+                class="mr-1"
+              >
+                <v-card class="transparent" flat>
+                  <v-list-item three-line>
+                    <v-list-item-avatar size="80"
+                      ><v-img
+                        :src="`${url}/uploads/avatars/${channel.photoUrl}`"
+                      ></v-img
+                    ></v-list-item-avatar>
+                    <v-list-item-content class="align-self-auto">
+                      <v-list-item-title class="headline mb-1">{{
+                        channel.channelName
+                      }}</v-list-item-title>
+                      <v-list-item-subtitle
+                        >{{ channel.subscribers }} subscribers
+                      </v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-card>
+              </v-skeleton-loader>
             </v-col>
             <v-col cols="12" sm="5" md="3" lg="3">
               <v-btn class="red white--text mt-6" tile large depressed
@@ -56,7 +62,10 @@
                 <v-card-title>Uploads</v-card-title>
                 <!-- <v-sheet class="mx-auto"> -->
                 <v-slide-group class="pa-4" multiple show-arrows>
-                  <v-slide-item v-for="i in loading ? 5 : 10" :key="i">
+                  <v-slide-item
+                    v-for="(video, i) in loading ? 5 : videos.data"
+                    :key="i"
+                  >
                     <v-skeleton-loader
                       type="card-avatar"
                       :loading="loading"
@@ -66,31 +75,8 @@
                       <video-card
                         :card="{ maxWidth: 250, type: 'noAvatar' }"
                         :video="video"
-                        :channel="channel"
+                        :channel="video.userId"
                       ></video-card>
-                      <!-- <v-card class="content-bg card" max-width="250" flat tile>
-                        <v-img
-                          src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                          height="200px"
-                        ></v-img>
-                        <v-row no-gutters>
-                          <v-col>
-                            <v-card-title
-                              class="pl-2 pt-3 subtitle-1 font-weight-bold"
-                            >
-                              Top western road trips
-                            </v-card-title>
-
-                            <v-card-subtitle class="pl-2 pb-0">
-                              1,000 miles of wonder
-                            </v-card-subtitle>
-                            <v-card-subtitle class="pl-2 pt-0">
-                              9.6k views<v-icon>mdi-circle-small</v-icon>6 hours
-                              ago
-                            </v-card-subtitle>
-                          </v-col>
-                        </v-row>
-                      </v-card> -->
                     </v-skeleton-loader>
                   </v-slide-item>
                 </v-slide-group>
@@ -105,7 +91,7 @@
                     sm="6"
                     md="4"
                     lg="3"
-                    v-for="i in loading ? 10 : 12"
+                    v-for="(video, i) in loading ? 10 : videos.data"
                     :key="i"
                     class="mx-xs-auto"
                   >
@@ -113,50 +99,11 @@
                       <video-card
                         :card="{ maxWidth: 350 }"
                         :video="video"
-                        :channel="channel"
+                        :channel="video.userId"
                       ></video-card>
-                      <!-- <v-card
-                        class="content-bg card mx-auto"
-                        max-width="350"
-                        flat
-                        tile
-                      >
-                        <v-img
-                          src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                          height="200px"
-                        ></v-img>
-                        <v-row no-gutters>
-                          <v-col cols="2">
-                            <v-list-item class="pl-0 pt-3">
-                              <v-list-item-avatar color="grey darken-3">
-                                <v-img
-                                  class="elevation-6"
-                                  src="https://randomuser.me/api/portraits/men/1.jpg"
-                                ></v-img>
-                              </v-list-item-avatar>
-                            </v-list-item>
-                          </v-col>
-                          <v-col>
-                            <v-card-title
-                              class="pl-2 pt-3 subtitle-1 font-weight-bold"
-                            >
-                              Top western road trips
-                            </v-card-title>
-
-                            <v-card-subtitle class="pl-2 pb-0">
-                              1,000 miles of wonder
-                            </v-card-subtitle>
-                            <v-card-subtitle class="pl-2 pt-0">
-                              9.6k views<v-icon>mdi-circle-small</v-icon>6 hours
-                              ago
-                            </v-card-subtitle>
-                          </v-col>
-                        </v-row>
-                      </v-card> -->
                     </v-skeleton-loader>
                   </v-col>
                 </v-row>
-                <v-card-text>home</v-card-text>
               </v-card>
             </v-tab-item>
           </v-tabs-items>
@@ -167,31 +114,60 @@
 </template>
 
 <script>
+import UserService from '@/services/UserService'
+import VideoService from '@/services/VideoService'
 import VideoCard from '@/components/VideoCard'
 export default {
   data: () => ({
     tab: null,
-    loading: true,
+    loading: false,
+    errored: false,
+    url: process.env.VUE_APP_URL,
     items: ['Home', 'Videos', 'Playlists', 'Community', 'Channels', 'about'],
-    video: {
-      url: '/watch/12',
-      thumb: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-      title: 'Top western road trips',
-      views: '9.6k',
-      createdAt: '6 hours ago'
-    },
-    channel: {
-      url: '/channels/12',
-      avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
-    }
+    videos: {},
+    channel: {}
   }),
   components: {
     VideoCard
   },
+  methods: {
+    async getChannel() {
+      // console.log(this.$route.params.id)
+      this.loading = true
+      this.errored = false
+
+      const channel = await UserService.getById(this.$route.params.id)
+        .catch((err) => {
+          this.errored = true
+          console.log(err)
+        })
+        .finally(() => (this.loading = false))
+
+      if (!channel) return
+      this.channel = channel.data.data
+      this.getVideos()
+      // console.log(channel)
+    },
+    async getVideos() {
+      // this.getChannel()
+      this.loading = true
+
+      const videos = await VideoService.getAll(
+        `public/?userId=${this.channel._id}`
+      )
+        .catch((err) => {
+          console.log(err)
+          this.errored = true
+        })
+        .finally(() => (this.loading = false))
+
+      if (typeof videos === 'undefined') return
+
+      this.videos = videos.data
+    }
+  },
   mounted() {
-    setTimeout(() => {
-      this.loading = false
-    }, 3000)
+    this.getChannel()
   }
 }
 </script>

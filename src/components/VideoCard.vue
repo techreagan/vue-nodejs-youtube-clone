@@ -5,19 +5,28 @@
     flat
     tile
     router
-    :to="video.url"
+    :to="`/watch/${video._id}`"
   >
-    <v-img :src="video.thumb" height="200px"></v-img>
+    <v-img
+      :src="`${url}/uploads/thumbnails/${video.thumbnailUrl}`"
+      height="200px"
+    ></v-img>
     <v-row no-gutters>
       <v-col cols="2" v-if="card.type != 'noAvatar'">
-        <v-list-item class="pl-0 pt-3" router :to="channel.url">
+        <v-list-item class="pl-0 pt-3" router :to="`/channels/${channel._id}`">
           <v-list-item-avatar color="grey darken-3">
-            <v-img class="elevation-6" :src="channel.avatar"></v-img>
+            <v-img
+              class="elevation-6"
+              :src="`${url}/uploads/avatars/${channel.photoUrl}`"
+            ></v-img>
           </v-list-item-avatar>
         </v-list-item>
       </v-col>
       <v-col>
-        <v-card-title class="pl-2 pt-3 subtitle-1 font-weight-bold">
+        <v-card-title
+          class="pl-2 pt-3 subtitle-1 font-weight-bold"
+          style="line-height: 1.2rem"
+        >
           {{ video.title }}
         </v-card-title>
 
@@ -26,7 +35,7 @@
         </v-card-subtitle>
         <v-card-subtitle class="pl-2 pt-0">
           {{ video.views }} views<v-icon>mdi-circle-small</v-icon
-          >{{ video.createdAt }}
+          >{{ dateFormatter(video.createdAt) }}
         </v-card-subtitle>
       </v-col>
     </v-row>
@@ -34,7 +43,9 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
+  name: 'VideoCard',
   props: {
     video: {
       type: Object,
@@ -45,6 +56,16 @@ export default {
       required: true
     },
     card: Object
+  },
+  data() {
+    return {
+      url: process.env.VUE_APP_URL
+    }
+  },
+  methods: {
+    dateFormatter(date) {
+      return moment(date).fromNow()
+    }
   }
 }
 </script>
