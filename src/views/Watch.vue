@@ -54,17 +54,37 @@
                         {{ video.views }} views<v-icon>mdi-circle-small</v-icon
                         >{{ dateFormatter(video.createdAt) }}
                       </v-card-subtitle>
-                      <v-card-actions class="pt-0 pl-0 grey--text">
-                        <v-btn text
-                          ><v-icon class="pr-2">mdi-thumb-up</v-icon
+                      <v-card-actions class="pt-0 pl-0">
+                        <v-btn text @click="createFeeling('like')"
+                          ><v-icon
+                            :class="
+                              `pr-2${
+                                feeling !== 'like'
+                                  ? ' grey--text text--darken-1'
+                                  : ''
+                              }`
+                            "
+                            >mdi-thumb-up</v-icon
                           >{{ video.likes }}</v-btn
                         >
-                        <v-btn text
-                          ><v-icon class="pr-2">mdi-thumb-down</v-icon>
+
+                        <v-btn text @click="createFeeling('dislike')"
+                          ><v-icon
+                            :class="
+                              `pr-2${
+                                feeling !== 'dislike'
+                                  ? ' grey--text text--darken-1'
+                                  : ''
+                              }`
+                            "
+                            >mdi-thumb-down</v-icon
+                          >
                           {{ video.dislikes }}</v-btn
                         >
-                        <v-btn text><v-icon>mdi-share</v-icon> Share</v-btn>
-                        <v-btn text
+                        <v-btn text class="grey--text text--darken-1"
+                          ><v-icon>mdi-share</v-icon> Share</v-btn
+                        >
+                        <v-btn text class="grey--text text--darken-1"
                           ><v-icon>mdi-playlist-plus</v-icon> Save</v-btn
                         >
                       </v-card-actions>
@@ -104,8 +124,20 @@
                     </v-col>
                     <v-col cols="6" sm="6" md="4" lg="4">
                       <div class="d-flex justify-end align-center">
-                        <v-btn class="red white--text mt-6" tile large depressed
-                          >Subscribed</v-btn
+                        <v-btn
+                          :class="[
+                            { 'red white--text': !subscribed },
+                            {
+                              'grey grey--text lighten-3 text--darken-3': subscribed
+                            },
+                            'mt-6'
+                          ]"
+                          tile
+                          large
+                          depressed
+                          :loading="subscribeLoading"
+                          @click="subscribe"
+                          >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
                         >
                         <v-btn icon class="ml-5 mt-6"
                           ><v-icon>mdi-bell</v-icon></v-btn
@@ -209,14 +241,22 @@
 
 <script>
 import moment from 'moment'
+
 import VideoService from '@/services/VideoService'
+import SubscriptionService from '@/services/SubscriptionService'
+import FeelingService from '@/services/FeelingService'
+
 import AddComment from '@/components/comments/AddComment'
 import CommentList from '@/components/comments/CommentList'
+
 export default {
   data: () => ({
     loading: false,
     errored: false,
     videoLoading: true,
+    subscribed: false,
+    subscribeLoading: false,
+    feeling: '',
     video: {},
     videos: [],
     truncate: true,
@@ -236,11 +276,15 @@ export default {
 
         // video.data.data.userId.photoUrl = `${process.env.VUE_APP_URL}/uploads/avatars/${video.data.data.userId.photoUrl}`
         this.video = video.data.data
+        // this.video.likes = 2
+        // this.video.dislikes = 2
       } catch (err) {
         this.errored = true
         console.log(err)
       } finally {
         this.videoLoading = false
+        this.checkSubscription(this.video.userId._id)
+        this.checkFeeling(this.video._id)
         // if (this.video.url != '' && this.video.userId != '')
         // this.videoLoading = false
       }
@@ -270,21 +314,112 @@ export default {
 
       this.videos = videos.data
     },
+    async checkSubscription(id) {
+      this.loading = true
+      const sub = await SubscriptionService.checkSubscription({ channelId: id })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+
+      if (!sub) return
+
+      if (!sub.data.data._id) this.subscribed = false
+      else this.subscribed = true
+    },
+    async checkFeeling(id) {
+      this.loading = true
+      const feeling = await FeelingService.checkFeeling({ videoId: id })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+
+      if (!feeling) return
+
+      if (feeling.data.data.feeling === 'like') this.feeling = 'like'
+      else if (feeling.data.data.feeling === 'dislike') this.feeling = 'dislike'
+    },
+    async createFeeling(type) {
+      // console.log(this.video)
+      // Check type
+      switch (true) {
+        case type === 'like' && this.feeling === '':
+          this.feeling = 'like'
+          this.video.likes++
+          // console.log('new like')
+          break
+        case type === 'like' && this.feeling === type:
+          this.feeling = ''
+          this.video.likes--
+          // console.log('remove like')
+          break
+        case type === 'like' && this.feeling === 'dislike':
+          this.feeling = 'like'
+          this.video.dislikes--
+          this.video.likes++
+          // console.log('change to like')
+          break
+        case type === 'dislike' && this.feeling === '':
+          this.feeling = 'dislike'
+          this.video.dislikes++
+          // console.log('new dislike')
+          break
+        case type === 'dislike' && this.feeling === type:
+          this.feeling = ''
+          this.video.dislikes--
+          // console.log('remove dislike')
+          break
+        case type === 'dislike' && this.feeling === 'like':
+          this.feeling = 'dislike'
+          this.video.likes--
+          this.video.dislikes++
+        // console.log('change to dislike')
+      }
+      // change this.feeling to type
+      // increase like or dislike
+
+      const feeling = await FeelingService.createFeeling({
+        videoId: this.video._id,
+        type
+      }).catch((err) => {
+        console.log(err)
+      })
+
+      if (!feeling) return
+      // console.log(feeling.data.data)
+    },
+    async subscribe() {
+      this.subscribeLoading = true
+      const sub = await SubscriptionService.createSubscription({
+        channelId: this.video.userId._id
+      })
+        .catch((err) => console.log(err))
+        .finally(() => {
+          this.subscribeLoading = false
+        })
+
+      if (!sub) return
+
+      if (!sub.data.data._id) {
+        this.subscribed = false
+        // console.log(this.video.userId)
+        this.video.userId.subscribers--
+      } else {
+        this.subscribed = true
+        this.video.userId.subscribers++
+      }
+
+      console.log(this.subscribed)
+    },
     actions() {
       this.getVideo()
       this.getVideos()
     },
-    // showReply(id) {
-    //   this.$refs[id][0].classList.toggle('d-none')
-    // },
-    // hideReply(id) {
-    //   this.$refs[`form${id}`][0].reset()
-    //   this.$refs['reply' + id][0].classList.toggle('d-none')
-    // },
-    // addReply(id) {
-    //   this.$refs[`form${id}`][0].reset()
-    //   console.log(this.$refs[`input${id}`][0].$refs.input.value)
-    // },
     show(event) {
       if (event.target.innerText === 'SHOW MORE') {
         this.truncate = false
@@ -322,11 +457,15 @@ video {
   height: 360px; */
 }
 
+.grey-color {
+  color: #7f7f7f !important;
+}
+
 #btns {
   border-bottom: 1px solid #e0d8d8;
-  button {
-    color: #7f7f7f;
-  }
+  // button {
+  //   color: #7f7f7f;
+  // }
 }
 
 button.v-btn.remove-hover-bg {

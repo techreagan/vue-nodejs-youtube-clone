@@ -33,9 +33,19 @@
                 </v-card>
               </v-skeleton-loader>
             </v-col>
-            <v-col cols="12" sm="5" md="3" lg="3">
-              <v-btn class="red white--text mt-6" tile large depressed
-                >Subscribed</v-btn
+            <v-col cols="12" sm="5" md="3" lg="3" v-if="!loading">
+              <v-btn
+                :class="[
+                  { 'red white--text': !subscribed },
+                  { 'grey grey--text lighten-3 text--darken-3': subscribed },
+                  'mt-6'
+                ]"
+                tile
+                large
+                depressed
+                :loading="subscribeLoading"
+                @click="subscribe"
+                >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
               >
               <v-btn icon class="ml-5 mt-6"><v-icon>mdi-bell</v-icon></v-btn>
             </v-col>
@@ -116,12 +126,16 @@
 <script>
 import UserService from '@/services/UserService'
 import VideoService from '@/services/VideoService'
+import SubscriptionService from '@/services/SubscriptionService'
 import VideoCard from '@/components/VideoCard'
+
 export default {
   data: () => ({
     tab: null,
     loading: false,
     errored: false,
+    subscribed: false,
+    subscribeLoading: false,
     url: process.env.VUE_APP_URL,
     items: ['Home', 'Videos', 'Playlists', 'Community', 'Channels', 'about'],
     videos: {},
@@ -146,6 +160,7 @@ export default {
       if (!channel) return
       this.channel = channel.data.data
       this.getVideos()
+      this.checkSubscription(this.channel._id)
       // console.log(channel)
     },
     async getVideos() {
@@ -164,6 +179,43 @@ export default {
       if (typeof videos === 'undefined') return
 
       this.videos = videos.data
+    },
+    async checkSubscription(id) {
+      this.loading = true
+      const sub = await SubscriptionService.checkSubscription({ channelId: id })
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+      console.log(sub.data.data)
+      if (!sub) return
+
+      if (!sub.data.data._id) this.subscribed = false
+      else this.subscribed = true
+    },
+    async subscribe() {
+      this.subscribeLoading = true
+      const sub = await SubscriptionService.createSubscription({
+        channelId: this.channel._id
+      })
+        .catch((err) => console.log(err))
+        .finally(() => {
+          this.subscribeLoading = false
+        })
+
+      if (!sub) return
+
+      if (!sub.data.data._id) {
+        this.subscribed = false
+        this.channel.subscribers--
+      } else {
+        this.subscribed = true
+        this.channel.subscribers++
+      }
+
+      console.log(this.subscribed)
     }
   },
   mounted() {

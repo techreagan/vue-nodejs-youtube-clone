@@ -83,7 +83,10 @@
           <v-divider></v-divider>
 
           <v-list>
-            <v-list-item router to="/channels/10">
+            <v-list-item
+              router
+              :to="`/channels/${$store.getters.currentUser._id}`"
+            >
               <v-list-item-icon>
                 <v-icon>mdi-account-box</v-icon>
               </v-list-item-icon>
