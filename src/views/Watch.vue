@@ -19,10 +19,6 @@
         <v-col v-else cols="11" class="mx-auto">
           <v-row>
             <v-col cols="12" sm="12" md="8" lg="8">
-              <!-- <component
-                :is="transition !== 'None' ? `v-${transition}` : 'div'"
-                hide-on-leave
-              > -->
               <v-skeleton-loader
                 type="card-avatar, article, actions"
                 :loading="videoLoading"
@@ -38,7 +34,7 @@
                       />
                     </video>
                   </v-responsive>
-                  <!-- </div> -->
+
                   <v-card flat tile class="card">
                     <v-card-title class="pl-0 pb-0">{{
                       video.title
@@ -158,7 +154,6 @@
                     </v-col>
                   </v-row>
                 </div>
-                <!-- </component> -->
               </v-skeleton-loader>
 
               <v-row>
@@ -271,13 +266,7 @@ export default {
         const video = await VideoService.getById(this.$route.params.id)
 
         if (!video) return this.$router.push('/')
-
-        // video.data.data.url = `${process.env.VUE_APP_URL}/uploads/videos/${video.data.data.url}`
-
-        // video.data.data.userId.photoUrl = `${process.env.VUE_APP_URL}/uploads/avatars/${video.data.data.userId.photoUrl}`
         this.video = video.data.data
-        // this.video.likes = 2
-        // this.video.dislikes = 2
       } catch (err) {
         this.errored = true
         console.log(err)
@@ -285,14 +274,8 @@ export default {
         this.videoLoading = false
         this.checkSubscription(this.video.userId._id)
         this.checkFeeling(this.video._id)
-        // if (this.video.url != '' && this.video.userId != '')
-        // this.videoLoading = false
       }
-      // console.log(video.data.data)
-      // this.videoLoading = false
-      // this.video.url =
-      // this.video.userId.photoUrl = `${process.env.VUE_APP_URL}/uploads/avatars/${this.video.userId.photoUrl}`
-      // console.log(this.video)
+
       if (
         this.video.userId._id.toString() !==
           this.$store.getters.currentUser._id.toString() &&
@@ -345,8 +328,6 @@ export default {
       else if (feeling.data.data.feeling === 'dislike') this.feeling = 'dislike'
     },
     async createFeeling(type) {
-      // console.log(this.video)
-      // Check type
       switch (true) {
         case type === 'like' && this.feeling === '':
           this.feeling = 'like'
@@ -380,8 +361,6 @@ export default {
           this.video.dislikes++
         // console.log('change to dislike')
       }
-      // change this.feeling to type
-      // increase like or dislike
 
       const feeling = await FeelingService.createFeeling({
         videoId: this.video._id,
@@ -391,7 +370,6 @@ export default {
       })
 
       if (!feeling) return
-      // console.log(feeling.data.data)
     },
     async subscribe() {
       this.subscribeLoading = true
@@ -413,8 +391,6 @@ export default {
         this.subscribed = true
         this.video.userId.subscribers++
       }
-
-      console.log(this.subscribed)
     },
     actions() {
       this.getVideo()
