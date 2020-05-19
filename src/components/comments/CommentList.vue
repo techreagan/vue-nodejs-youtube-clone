@@ -28,7 +28,7 @@
                     </v-btn>
                   </template>
 
-                  <v-list>
+                  <v-list v-if="isAuthenticated">
                     <v-list-item @click="deleteComment(comment._id)">
                       <v-list-item-title
                         ><v-icon>mdi-trash</v-icon>Delete</v-list-item-title
@@ -55,10 +55,15 @@
                 <v-list-item three-line class="pl-0">
                   <v-list-item-avatar
                     v-if="typeof comment.userId !== 'undefined'"
-                    class="mt-0"
+                    class="mt-2"
                     size="40"
-                    ><v-img
-                      :src="`${url}/uploads/avatars/${comment.userId.photoUrl}`"
+                  >
+                    <v-avatar v-if="!isAuthenticated" color="primary">
+                      <v-icon class="white--text">mdi-account</v-icon>
+                    </v-avatar>
+                    <v-img
+                      v-else
+                      :src="`${url}/uploads/avatars/${currentUser.photoUrl}`"
                     ></v-img
                   ></v-list-item-avatar>
                   <v-list-item-content class="align-self-auto mt-0 pt-0">
@@ -67,6 +72,7 @@
                         :ref="`${'input' + comment._id}`"
                         class="pt-0 mt-0 body-2"
                         placeholder="Add a public comment..."
+                        @click="clickTextField"
                         :value="repliesInput[`input${comment._id}`]"
                       >
                       </v-text-field>
@@ -74,6 +80,7 @@
                     <div
                       :ref="comment._id + 'btns'"
                       class="d-inline-block text-right"
+                      v-if="isAuthenticated"
                     >
                       <v-btn text @click="hideReply(comment._id)" small
                         >Cancel</v-btn
@@ -131,7 +138,7 @@
                               {{ dateFormatter(reply.createdAt) }}</span
                             >
                           </v-list-item-title>
-                          <v-menu bottom left>
+                          <v-menu bottom left v-if="isAuthenticated">
                             <template v-slot:activator="{ on }">
                               <v-btn icon v-on="on">
                                 <v-icon>mdi-dots-vertical</v-icon>
@@ -175,6 +182,8 @@
 
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
+
 import CommentService from '@/services/CommentService'
 import ReplyService from '@/services/ReplyService'
 export default {
@@ -195,6 +204,9 @@ export default {
       loading: false
     }
   },
+  computed: {
+    ...mapGetters(['isAuthenticated', 'currentUser'])
+  },
   methods: {
     async getComments() {
       this.loading = true
@@ -210,6 +222,7 @@ export default {
       // console.log(this.$store.getters.getComments.data)
     },
     async deleteComment(id) {
+      if (!this.isAuthenticated) return
       // this.$store.dispatch('deleteComment', id)
       this.comments = this.comments.filter(
         (comment) => comment._id.toString() !== id.toString()
@@ -227,6 +240,7 @@ export default {
       this.$emit('videoCommentLength')
     },
     async addReply(event, id) {
+      if (!this.isAuthenticated) return
       if (this.$refs[`input${id}`][0].$refs.input.value == '') return
 
       this.btnLoading = true
@@ -272,6 +286,9 @@ export default {
       // this.comments
       //   .find((comment) => comment._id === id)
       //   .replies.unshift(reply.data.data)
+    },
+    clickTextField() {
+      if (!this.isAuthenticated) return this.$router.push('/signin')
     },
     showReply(id) {
       this.$refs[id][0].classList.toggle('d-none')
