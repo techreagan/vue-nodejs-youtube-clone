@@ -60,7 +60,17 @@
       <v-menu offset-y left>
         <template v-slot:activator="{ on }">
           <v-btn small color="red" depressed fab v-on="on" class="white--text">
-            T
+            <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+              <img
+                :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                :alt="`${currentUser.channelName} avatar`"
+              />
+            </v-avatar>
+            <template v-else>
+              <span class="headline">
+                {{ currentUser.channelName.split('')[0].toUpperCase() }}
+              </span>
+            </template>
           </v-btn>
         </template>
 
@@ -68,14 +78,30 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar>
-                <img :src="`https://randomuser.me/api/portraits/men/4.jpg`" />
+                <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+                  <img
+                    :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                    :alt="`${currentUser.channelName} avatar`"
+                  />
+                </v-avatar>
+                <template v-else>
+                  <v-avatar color="red">
+                    <span class="white--text headline ">
+                      {{
+                        currentUser.channelName.split('')[0].toUpperCase()
+                      }}</span
+                    >
+                  </v-avatar>
+                </template>
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title>Tech Reagan</v-list-item-title>
-                <v-list-item-subtitle
-                  >techreagan@gmail.com</v-list-item-subtitle
-                >
+                <v-list-item-title class="text-capitalize">{{
+                  currentUser.channelName
+                }}</v-list-item-title>
+                <v-list-item-subtitle>{{
+                  currentUser.email
+                }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -169,24 +195,42 @@
               <v-btn
                 height="95"
                 width="95"
-                href
                 x-large
                 color="red"
                 depressed
                 fab
-                to="/channels/222"
+                :to="`/channels/${currentUser._id}`"
                 class="white--text mx-auto"
               >
-                <h1 class="display-1">T</h1>
+                <v-avatar
+                  height="96"
+                  width="96"
+                  v-if="currentUser.photoUrl !== 'no-photo.jpg'"
+                >
+                  <img
+                    :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                    :alt="`${currentUser.channelName} avatar`"
+                  />
+                </v-avatar>
+                <!-- <template > -->
+                <span v-else class="display-3">
+                  {{ currentUser.channelName.split('')[0].toUpperCase() }}
+                </span>
+                <!-- </template> -->
+                <!-- <span class="display-3" v-if="currentUser.photoUrl === 'no-photo.jpg'">
+                  {{ currentUser.channelName.split('')[0].toUpperCase() }}
+                </span> -->
               </v-btn>
             </v-list-item>
 
-            <v-list-item link to="/channels/222">
+            <v-list-item link :to="`/channels/${currentUser._id}`">
               <v-list-item-content>
-                <v-list-item-title class="title">Tech Reagan</v-list-item-title>
-                <v-list-item-subtitle
-                  >techreagan1@gmail.com</v-list-item-subtitle
-                >
+                <v-list-item-title class="title">{{
+                  currentUser.channelName
+                }}</v-list-item-title>
+                <v-list-item-subtitle>{{
+                  currentUser.email
+                }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -205,6 +249,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import UploadVideoModal from '@/components/UploadVideoModal'
 import SettingsModal from '@/components/SettingsModal'
 export default {
@@ -278,6 +324,9 @@ export default {
     dialog: false,
     settingsDialog: false
   }),
+  computed: {
+    ...mapGetters(['currentUser', 'getUrl'])
+  },
   methods: {
     search() {
       console.log('hello')
