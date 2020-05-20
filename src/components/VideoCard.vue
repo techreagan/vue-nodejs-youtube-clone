@@ -16,9 +16,15 @@
         <v-list-item class="pl-0 pt-3" router :to="`/channels/${channel._id}`">
           <v-list-item-avatar color="grey darken-3">
             <v-img
+              v-if="channel.photoUrl !== 'no-photo.jpg'"
               class="elevation-6"
               :src="`${url}/uploads/avatars/${channel.photoUrl}`"
             ></v-img>
+            <v-avatar v-else color="red">
+              <span class="white--text headline ">
+                {{ channel.channelName.split('')[0].toUpperCase() }}</span
+              >
+            </v-avatar>
           </v-list-item-avatar>
         </v-list-item>
       </v-col>

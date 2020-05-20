@@ -1,5 +1,5 @@
 <template>
-  <div id="watch">
+  <div id="watch" ref="watch">
     <v-container fluid>
       <v-row>
         <v-alert prominent class="mx-auto" type="error" v-if="errored">
@@ -25,9 +25,13 @@
                 tile
                 large
               >
-                <div>
+                <div ref="hello">
                   <v-responsive max-height="450">
-                    <video controls style="height: 100%; width: 100%">
+                    <video
+                      ref="videoPlayer"
+                      controls
+                      style="height: 100%; width: 100%"
+                    >
                       <source
                         :src="`${url}/uploads/videos/${video.url}`"
                         type="video/mp4"
@@ -88,20 +92,29 @@
                   </v-card>
 
                   <v-row class="justify-space-between">
-                    <v-col cols="6" sm="6" md="5" lg="5">
+                    <v-col cols="12" sm="6" md="5" lg="5">
                       <v-card class="transparent" flat>
                         <v-list-item three-line>
                           <v-list-item-avatar
                             v-if="typeof video.userId !== 'undefined'"
                             size="50"
                           >
-                            <!-- <v-img :src="video.userId.photoUrl"></v-img> -->
-                            <v-img
+                            <img
+                              v-if="video.userId.photoUrl !== 'no-photo.jpg'"
                               :src="
-                                `${url}/uploads/avatars/${video.userId.photoUrl}`
+                                `${getUrl}/uploads/avatars/${video.userId.photoUrl}`
                               "
-                            ></v-img>
-                            <!-- src="https://randomuser.me/api/portraits/men/1.jpg" -->
+                              :alt="`${video.userId.channelName} avatar`"
+                            />
+                            <v-avatar v-else color="red">
+                              <span class="white--text headline ">
+                                {{
+                                  video.userId.channelName
+                                    .split('')[0]
+                                    .toUpperCase()
+                                }}</span
+                              >
+                            </v-avatar>
                           </v-list-item-avatar>
                           <v-list-item-content
                             v-if="video.userId"
@@ -118,9 +131,12 @@
                         </v-list-item>
                       </v-card>
                     </v-col>
-                    <v-col cols="6" sm="6" md="4" lg="4">
+                    <v-col cols="12" sm="6" md="4" lg="4">
                       <div class="d-flex justify-end align-center">
                         <v-btn
+                          v-if="
+                            video.userId && video.userId._id !== currentUser._id
+                          "
                           :class="[
                             { 'red white--text': !subscribed },
                             {
@@ -135,9 +151,9 @@
                           @click="subscribe"
                           >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
                         >
-                        <v-btn icon class="ml-5 mt-6"
+                        <!-- <v-btn icon class="ml-5 mt-6"
                           ><v-icon>mdi-bell</v-icon></v-btn
-                        >
+                        > -->
                       </div>
                     </v-col>
                     <v-col class="pl-11" offset="1" cols="11" md="11">
@@ -176,7 +192,7 @@
               <hr class="grey--text" />
               <h4 class="mb-3 mt-3">Up next</h4>
               <div
-                v-for="(video, i) in loading ? 5 : videos.data"
+                v-for="(video, i) in loading ? 5 : videos"
                 :key="i"
                 class="mb-5"
               >
@@ -189,7 +205,7 @@
                 >
                   <v-card class="card" tile flat v-if="!loading">
                     <v-row no-gutters>
-                      <v-col class="mx-auto" cols="3" sm="3" md="5" lg="5">
+                      <v-col class="mx-auto" cols="12" sm="12" md="5" lg="5">
                         <!-- <v-responsive max-height="100%"> -->
                         <v-img
                           class="align-center"
@@ -226,27 +242,64 @@
                   </v-card>
                 </v-skeleton-loader>
               </div>
+              <!-- <v-col cols="12" sm="12" md="12" lg="12"> -->
+              <infinite-loading @infinite="getVideos">
+                <div slot="spinner">
+                  <v-progress-circular
+                    indeterminate
+                    color="red"
+                  ></v-progress-circular>
+                </div>
+                <div slot="no-results"></div>
+                <span slot="no-more"></span>
+                <div slot="error" slot-scope="{ trigger }">
+                  <v-alert prominent type="error">
+                    <v-row align="center">
+                      <v-col class="grow">
+                        <div class="title">Error!</div>
+                        <div>
+                          Something went wrong, but don’t fret — let’s give it
+                          another shot.
+                        </div>
+                      </v-col>
+                      <v-col class="shrink">
+                        <v-btn @click="trigger">Take action</v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-alert>
+                </div>
+              </infinite-loading>
+              <!-- </v-col> -->
             </v-col>
           </v-row>
         </v-col>
       </v-row>
     </v-container>
+    <signin-modal
+      :openModal="signinDialog"
+      :details="details"
+      @closeModal="signinDialog = false"
+    />
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import { mapGetters } from 'vuex'
+import InfiniteLoading from 'vue-infinite-loading'
 
 import VideoService from '@/services/VideoService'
 import SubscriptionService from '@/services/SubscriptionService'
 import FeelingService from '@/services/FeelingService'
 
+import SigninModal from '@/components/SigninModal'
 import AddComment from '@/components/comments/AddComment'
 import CommentList from '@/components/comments/CommentList'
 
 export default {
   data: () => ({
     loading: false,
+    loaded: false,
     errored: false,
     videoLoading: true,
     subscribed: false,
@@ -254,14 +307,20 @@ export default {
     feeling: '',
     video: {},
     videos: [],
+    page: 1,
     truncate: true,
-    url: process.env.VUE_APP_URL
+    url: process.env.VUE_APP_URL,
+    signinDialog: false,
+    details: {}
   }),
-
+  computed: {
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
+  },
   methods: {
     async getVideo() {
       this.errored = false
       this.videoLoading = true
+      // console.log(this.$refs)
       try {
         const video = await VideoService.getById(this.$route.params.id)
 
@@ -274,19 +333,32 @@ export default {
         this.videoLoading = false
         this.checkSubscription(this.video.userId._id)
         this.checkFeeling(this.video._id)
+        // console.log(this.videoLoading)
+        // if (!this.videoLoading) {
+        // console.log(this.$refs['hello'])
+        // }
+        // setInterval(() => {
+
+        // }, 1000)
       }
+      // console.log(this.$refs)
+      //  this.$refs.videoPlayer.addEventListener('loadedmetadata', () => {
+      //   console.log(this.$fres.videoPlayer.duration)
+      // })
+      if (!this.isAuthenticated) return
 
       if (
-        this.video.userId._id.toString() !==
-          this.$store.getters.currentUser._id.toString() &&
+        this.video.userId._id.toString() !== this.currentUser._id.toString() &&
         this.video.status !== 'public'
       )
         return this.$router.push('/')
     },
-    async getVideos() {
+    async getVideos($state) {
       this.errored = false
-      this.loading = true
-      const videos = await VideoService.getAll('public')
+      if (!this.loaded) {
+        this.loading = true
+      }
+      const videos = await VideoService.getAll('public', this.page)
         .catch((err) => {
           console.log(err)
           this.errored = true
@@ -295,9 +367,24 @@ export default {
 
       if (typeof videos === 'undefined') return
 
-      this.videos = videos.data
+      if (videos.data.data.length) {
+        this.page += 1
+
+        this.videos.push(...videos.data.data)
+        if ($state) {
+          $state.loaded()
+        }
+
+        this.loaded = true
+      } else {
+        if ($state) {
+          $state.complete()
+        }
+      }
     },
     async checkSubscription(id) {
+      if (!this.isAuthenticated) return
+
       this.loading = true
       const sub = await SubscriptionService.checkSubscription({ channelId: id })
         .catch((err) => {
@@ -313,6 +400,8 @@ export default {
       else this.subscribed = true
     },
     async checkFeeling(id) {
+      if (!this.isAuthenticated) return
+
       this.loading = true
       const feeling = await FeelingService.checkFeeling({ videoId: id })
         .catch((err) => {
@@ -328,6 +417,15 @@ export default {
       else if (feeling.data.data.feeling === 'dislike') this.feeling = 'dislike'
     },
     async createFeeling(type) {
+      if (!this.isAuthenticated) {
+        this.signinDialog = true
+        this.details = {
+          title:
+            type === 'like' ? 'Like this video?' : "Don't like this video?",
+          text: 'Sign in to make your opinion count.'
+        }
+        return
+      }
       switch (true) {
         case type === 'like' && this.feeling === '':
           this.feeling = 'like'
@@ -372,6 +470,14 @@ export default {
       if (!feeling) return
     },
     async subscribe() {
+      if (!this.isAuthenticated) {
+        this.signinDialog = true
+        this.details = {
+          title: 'Want to subscribe to this channel?',
+          text: 'Sign in to subscribe to this channel.'
+        }
+        return
+      }
       this.subscribeLoading = true
       const sub = await SubscriptionService.createSubscription({
         channelId: this.video.userId._id
@@ -391,6 +497,9 @@ export default {
         this.subscribed = true
         this.video.userId.subscribers++
       }
+    },
+    play(e) {
+      console.log(e)
     },
     actions() {
       this.getVideo()
@@ -417,10 +526,13 @@ export default {
   },
   components: {
     AddComment,
-    CommentList
+    CommentList,
+    SigninModal,
+    InfiniteLoading
   },
   mounted() {
     this.actions()
+    // console.log(this.videoLoading)
   }
 }
 </script>

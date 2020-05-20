@@ -23,7 +23,7 @@
             sm="6"
             md="4"
             lg="3"
-            v-for="(video, i) in loading ? 10 : videos.data"
+            v-for="(video, i) in loading ? 10 : videos"
             :key="i"
             class="mx-xs-auto"
           >
@@ -33,44 +33,35 @@
                 :video="video"
                 :channel="video.userId"
               ></video-card>
-              <!-- <v-card
-              class="content-bg card mx-auto"
-              max-width="350"
-              flat
-              tile
-              router
-              to="/watch/12"
-            >
-              <v-img
-                src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                height="200px"
-              ></v-img>
-              <v-row no-gutters>
-                <v-col cols="2">
-                  <v-list-item class="pl-0 pt-3" router to="/channels/12">
-                    <v-list-item-avatar color="grey darken-3">
-                      <v-img
-                        class="elevation-6"
-                        src="https://randomuser.me/api/portraits/men/1.jpg"
-                      ></v-img>
-                    </v-list-item-avatar>
-                  </v-list-item>
-                </v-col>
-                <v-col>
-                  <v-card-title class="pl-2 pt-3 subtitle-1 font-weight-bold">
-                    Top western road trips
-                  </v-card-title>
-
-                  <v-card-subtitle class="pl-2 pb-0">
-                    1,000 miles of wonder
-                  </v-card-subtitle>
-                  <v-card-subtitle class="pl-2 pt-0">
-                    9.6k views<v-icon>mdi-circle-small</v-icon>6 hours ago
-                  </v-card-subtitle>
-                </v-col>
-              </v-row>
-            </v-card> -->
             </v-skeleton-loader>
+          </v-col>
+          <v-col cols="12" sm="12" md="12" lg="12">
+            <infinite-loading @infinite="getVideos">
+              <div slot="spinner">
+                <v-progress-circular
+                  indeterminate
+                  color="red"
+                ></v-progress-circular>
+              </div>
+              <div slot="no-results"></div>
+              <span slot="no-more"></span>
+              <div slot="error" slot-scope="{ trigger }">
+                <v-alert prominent type="error">
+                  <v-row align="center">
+                    <v-col class="grow">
+                      <div class="title">Error!</div>
+                      <div>
+                        Something went wrong, but don’t fret — let’s give it
+                        another shot.
+                      </div>
+                    </v-col>
+                    <v-col class="shrink">
+                      <v-btn @click="trigger">Take action</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-alert>
+              </div>
+            </infinite-loading>
           </v-col>
         </v-row>
       </main>
@@ -79,6 +70,8 @@
 </template>
 
 <script>
+import InfiniteLoading from 'vue-infinite-loading'
+
 import VideoCard from '@/components/VideoCard'
 import VideoService from '@/services/VideoService'
 import moment from 'moment'
@@ -86,34 +79,52 @@ export default {
   name: 'Home',
   data: () => ({
     loading: true,
+    loaded: false,
     errored: false,
-    videos: []
+    videos: [],
+    page: 1
   }),
   methods: {
-    async getVideos() {
-      this.loading = true
-      const videos = await VideoService.getAll('public')
+    async getVideos($state) {
+      if (!this.loaded) {
+        this.loading = true
+      }
+
+      const videos = await VideoService.getAll('public', this.page)
         .catch((err) => {
           console.log(err)
           this.errored = true
         })
-        .finally(() => (this.loading = false))
+        .finally(() => {
+          this.loading = false
+        })
 
       if (typeof videos === 'undefined') return
 
-      this.videos = videos.data
+      if (videos.data.data.length) {
+        this.page += 1
+
+        this.videos.push(...videos.data.data)
+        if ($state) {
+          $state.loaded()
+        }
+
+        this.loaded = true
+      } else {
+        if ($state) {
+          $state.complete()
+        }
+      }
     },
     dateFormatter(date) {
       return moment(date).fromNow()
     }
   },
   components: {
-    VideoCard
+    VideoCard,
+    InfiniteLoading
   },
   mounted() {
-    // setTimeout(() => {
-    //   this.loading = false
-    // }, 3000)
     this.getVideos()
   }
 }

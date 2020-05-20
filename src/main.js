@@ -11,6 +11,7 @@ import {
   setInteractionMode
 } from 'vee-validate'
 import Vuebar from 'vuebar'
+// import InfiniteLoading from 'vue-infinite-loading'
 
 setInteractionMode('eager')
 
@@ -54,6 +55,15 @@ extend('size', {
 Vue.config.productionTip = false
 Vue.component('ValidationProvider', ValidationProvider)
 Vue.component('ValidationObserver', ValidationObserver)
+
+// Vue.use(InfiniteLoading, {
+//   props: {
+//     distance: null
+//     /* other props need to configure */
+//   }
+// })
+
+// Vue.component('InfiniteLoading', InfiniteLoading)
 
 Vue.use(Vuebar)
 

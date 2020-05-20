@@ -1,8 +1,12 @@
 import Api from '@/services/Api'
 
 export default {
-  getAll(data) {
-    return Api().get(`videos/${data}`)
+  getAll(data, page) {
+    return Api().get(`videos/${data}`, {
+      params: {
+        page
+      }
+    })
   },
   getById(id) {
     return Api().get(`videos/${id}`)

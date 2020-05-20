@@ -7,11 +7,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    url: process.env.VUE_APP_URL,
     token: localStorage.getItem('token') || null,
     user: JSON.parse(localStorage.getItem('user')) || null,
     isUserLoggedIn: localStorage.getItem('token') || false
   },
   getters: {
+    getUrl: (state) => {
+      return state.url
+    },
     isAuthenticated: (state) => {
       return state.isUserLoggedIn
     },

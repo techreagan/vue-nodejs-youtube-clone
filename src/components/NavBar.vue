@@ -82,7 +82,17 @@
       <v-menu offset-y left v-else>
         <template v-slot:activator="{ on }">
           <v-btn small color="red" depressed fab v-on="on" class="white--text">
-            T
+            <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+              <img
+                :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                :alt="`${currentUser.channelName} avatar`"
+              />
+            </v-avatar>
+            <template v-else>
+              <span class="headline">
+                {{ currentUser.channelName.split('')[0].toUpperCase() }}
+              </span>
+            </template>
           </v-btn>
         </template>
 
@@ -90,15 +100,29 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar>
-                <img :src="`https://randomuser.me/api/portraits/men/4.jpg`" />
+                <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
+                  <img
+                    :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                    :alt="`${currentUser.channelName} avatar`"
+                  />
+                </v-avatar>
+                <template v-else>
+                  <v-avatar color="red">
+                    <span class="white--text headline ">
+                      {{
+                        currentUser.channelName.split('')[0].toUpperCase()
+                      }}</span
+                    >
+                  </v-avatar>
+                </template>
               </v-list-item-avatar>
 
               <v-list-item-content>
                 <v-list-item-title class="text-capitalize">{{
-                  $store.getters.currentUser.channelName
+                  currentUser.channelName
                 }}</v-list-item-title>
                 <v-list-item-subtitle>{{
-                  $store.getters.currentUser.email
+                  currentUser.email
                 }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -206,6 +230,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data: () => ({
     drawer: true,
@@ -338,7 +363,11 @@ export default {
       { text: 'Policy & Safety', link: '#' },
       { text: 'Test new features', link: '#' }
     ]
+    // user: null
   }),
+  computed: {
+    ...mapGetters(['currentUser', 'getUrl'])
+  },
   methods: {
     search() {
       console.log('hello')
@@ -349,6 +378,8 @@ export default {
     }
   },
   mounted() {
+    // this.user = this.$store.getters.currentUser
+    // console.log(this.user)
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
     // console.log(this.$route.name)
     this.drawer = this.$route.name === 'Watch' ? false : this.drawer
@@ -360,6 +391,9 @@ export default {
 </script>
 
 <style lang="scss">
+.v-list-item__avatar {
+  justify-content: center !important;
+}
 #navbar {
   .active-item {
     .v-list-item__icon {
