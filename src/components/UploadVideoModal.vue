@@ -279,7 +279,10 @@ export default {
         .catch((err) => {
           console.log(err)
         })
-        .finally(() => (this.uploaded = true))
+        .finally(() => {
+          this.uploaded = true
+          this.uploading = false
+        })
 
       if (!video) return
       video = video.data.data
@@ -315,10 +318,17 @@ export default {
         .catch((err) => {
           console.log(err)
         })
-        .finally(() => (this.submitLoading = false))
+        .finally(() => {
+          this.submitLoading = false
+          this.uploaded = false
+        })
 
       if (!video) return
-
+      this.$nextTick(() => {
+        this.$refs.form.reset()
+      })
+      this.imgDataUrl = ''
+      this.selectedFile = []
       this.closeModal()
       this.$router.push('/studio/videos')
       // console.log('submittied')
