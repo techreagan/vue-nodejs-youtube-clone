@@ -16,11 +16,20 @@
               >
                 <v-card class="transparent" flat>
                   <v-list-item three-line>
-                    <v-list-item-avatar size="80"
-                      ><v-img
+                    <v-list-item-avatar size="80">
+                      <v-img
+                        v-if="currentUser.photoUrl !== 'no-photo.jpg'"
                         :src="`${url}/uploads/avatars/${channel.photoUrl}`"
-                      ></v-img
-                    ></v-list-item-avatar>
+                      ></v-img>
+
+                      <v-avatar v-else color="red" size="60">
+                        <span class="white--text headline ">
+                          {{
+                            currentUser.channelName.split('')[0].toUpperCase()
+                          }}</span
+                        >
+                      </v-avatar>
+                    </v-list-item-avatar>
                     <v-list-item-content class="align-self-auto">
                       <v-list-item-title class="headline mb-1">{{
                         channel.channelName
@@ -35,6 +44,7 @@
             </v-col>
             <v-col cols="12" sm="5" md="3" lg="3" v-if="!loading">
               <v-btn
+                v-if="channel._id !== currentUser._id"
                 :class="[
                   { 'red white--text': !subscribed },
                   { 'grey grey--text lighten-3 text--darken-3': subscribed },
@@ -47,7 +57,7 @@
                 @click="subscribe"
                 >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
               >
-              <v-btn icon class="ml-5 mt-6"><v-icon>mdi-bell</v-icon></v-btn>
+              <!-- <v-btn icon class="ml-5 mt-6"><v-icon>mdi-bell</v-icon></v-btn> -->
             </v-col>
           </v-row>
         </v-container>
@@ -120,14 +130,23 @@
         </v-container>
       </v-card>
     </div>
+    <signin-modal
+      :openModal="signinDialog"
+      :details="details"
+      @closeModal="signinDialog = false"
+    />
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import UserService from '@/services/UserService'
 import VideoService from '@/services/VideoService'
 import SubscriptionService from '@/services/SubscriptionService'
+
 import VideoCard from '@/components/VideoCard'
+import SigninModal from '@/components/SigninModal'
 
 export default {
   data: () => ({
@@ -139,10 +158,16 @@ export default {
     url: process.env.VUE_APP_URL,
     items: ['Home', 'Videos', 'Playlists', 'Community', 'Channels', 'about'],
     videos: {},
-    channel: {}
+    channel: {},
+    signinDialog: false,
+    details: {}
   }),
+  computed: {
+    ...mapGetters(['isAuthenticated', 'currentUser'])
+  },
   components: {
-    VideoCard
+    VideoCard,
+    SigninModal
   },
   methods: {
     async getChannel() {
@@ -189,13 +214,21 @@ export default {
         .finally(() => {
           this.loading = false
         })
-      console.log(sub.data.data)
+      // console.log(sub.data.data)
       if (!sub) return
 
       if (!sub.data.data._id) this.subscribed = false
       else this.subscribed = true
     },
     async subscribe() {
+      if (!this.isAuthenticated) {
+        this.signinDialog = true
+        this.details = {
+          title: 'Want to subscribe to this channel?',
+          text: 'Sign in to subscribe to this channel.'
+        }
+        return
+      }
       this.subscribeLoading = true
       const sub = await SubscriptionService.createSubscription({
         channelId: this.channel._id
