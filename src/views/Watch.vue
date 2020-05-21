@@ -132,8 +132,47 @@
                       </v-card>
                     </v-col>
                     <v-col cols="12" sm="6" md="4" lg="4">
-                      <div class="d-flex justify-end align-center">
+                      <div
+                        class="d-flex justify-end align-center"
+                        v-if="typeof video.userId !== 'undefined'"
+                      >
                         <v-btn
+                          v-if="
+                            currentUser && video.userId._id !== currentUser._id
+                          "
+                          :class="[
+                            { 'red white--text': !subscribed },
+                            {
+                              'grey grey--text lighten-3 text--darken-3': subscribed
+                            },
+                            'mt-6'
+                          ]"
+                          tile
+                          large
+                          depressed
+                          :loading="subscribeLoading"
+                          @click="subscribe"
+                          >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
+                        >
+
+                        <v-btn
+                          v-else-if="showSubBtn"
+                          :class="[
+                            { 'red white--text': !subscribed },
+                            {
+                              'grey grey--text lighten-3 text--darken-3': subscribed
+                            },
+                            'mt-6'
+                          ]"
+                          tile
+                          large
+                          depressed
+                          :loading="subscribeLoading"
+                          @click="subscribe"
+                          >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
+                        >
+
+                        <!-- <v-btn
                           v-if="
                             video.userId && video.userId._id !== currentUser._id
                           "
@@ -150,7 +189,7 @@
                           :loading="subscribeLoading"
                           @click="subscribe"
                           >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
-                        >
+                        > -->
                         <!-- <v-btn icon class="ml-5 mt-6"
                           ><v-icon>mdi-bell</v-icon></v-btn
                         > -->
@@ -192,7 +231,7 @@
               <hr class="grey--text" />
               <h4 class="mb-3 mt-3">Up next</h4>
               <div
-                v-for="(video, i) in loading ? 5 : videos"
+                v-for="(video, i) in loading ? 12 : videos"
                 :key="i"
                 class="mb-5"
               >
@@ -304,6 +343,7 @@ export default {
     videoLoading: true,
     subscribed: false,
     subscribeLoading: false,
+    showSubBtn: true,
     feeling: '',
     video: {},
     videos: [],
@@ -340,6 +380,11 @@ export default {
         // setInterval(() => {
 
         // }, 1000)
+      }
+      if (this.currentUser && this.currentUser._id === this.video.userId._id) {
+        this.showSubBtn = false
+      } else {
+        this.showSubBtn = true
       }
       // console.log(this.$refs)
       //  this.$refs.videoPlayer.addEventListener('loadedmetadata', () => {
@@ -503,7 +548,7 @@ export default {
     },
     actions() {
       this.getVideo()
-      this.getVideos()
+      // this.getVideos()
     },
     show(event) {
       if (event.target.innerText === 'SHOW MORE') {
@@ -531,7 +576,8 @@ export default {
     InfiniteLoading
   },
   mounted() {
-    this.actions()
+    this.getVideo()
+    // this.actions()
     // console.log(this.videoLoading)
   }
 }

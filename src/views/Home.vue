@@ -23,7 +23,7 @@
             sm="6"
             md="4"
             lg="3"
-            v-for="(video, i) in loading ? 10 : videos"
+            v-for="(video, i) in loading ? 12 : videos"
             :key="i"
             class="mx-xs-auto"
           >
@@ -78,7 +78,7 @@ import moment from 'moment'
 export default {
   name: 'Home',
   data: () => ({
-    loading: true,
+    loading: false,
     loaded: false,
     errored: false,
     videos: [],
@@ -86,6 +86,7 @@ export default {
   }),
   methods: {
     async getVideos($state) {
+      // if (this.loading)
       if (!this.loaded) {
         this.loading = true
       }
@@ -100,21 +101,21 @@ export default {
         })
 
       if (typeof videos === 'undefined') return
-
+      // if (!this.loading) {
       if (videos.data.data.length) {
         this.page += 1
-
+        // console.log(this.page)
         this.videos.push(...videos.data.data)
-        if ($state) {
-          $state.loaded()
-        }
-
+        // if ($state) {
+        $state.loaded()
+        // }
         this.loaded = true
       } else {
-        if ($state) {
-          $state.complete()
-        }
+        // if ($state) {
+        $state.complete()
+        // }
       }
+      // }
     },
     dateFormatter(date) {
       return moment(date).fromNow()
@@ -125,7 +126,7 @@ export default {
     InfiniteLoading
   },
   mounted() {
-    this.getVideos()
+    // this.getVideos()
   }
 }
 </script>
