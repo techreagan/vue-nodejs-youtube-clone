@@ -18,14 +18,14 @@
                   <v-list-item three-line>
                     <v-list-item-avatar size="80">
                       <v-img
-                        v-if="currentUser.photoUrl !== 'no-photo.jpg'"
+                        v-if="channel.photoUrl !== 'no-photo.jpg'"
                         :src="`${url}/uploads/avatars/${channel.photoUrl}`"
                       ></v-img>
 
                       <v-avatar v-else color="red" size="60">
                         <span class="white--text headline ">
                           {{
-                            currentUser.channelName.split('')[0].toUpperCase()
+                            channel.channelName.split('')[0].toUpperCase()
                           }}</span
                         >
                       </v-avatar>
@@ -44,7 +44,22 @@
             </v-col>
             <v-col cols="12" sm="5" md="3" lg="3" v-if="!loading">
               <v-btn
-                v-if="channel._id !== currentUser._id"
+                v-if="currentUser && channel._id !== currentUser._id"
+                :class="[
+                  { 'red white--text': !subscribed },
+                  { 'grey grey--text lighten-3 text--darken-3': subscribed },
+                  'mt-6'
+                ]"
+                tile
+                large
+                depressed
+                :loading="subscribeLoading"
+                @click="subscribe"
+                >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
+              >
+              <!-- <template v-else-if="!currentUser" -->
+              <v-btn
+                v-else-if="showSubBtn"
                 :class="[
                   { 'red white--text': !subscribed },
                   { 'grey grey--text lighten-3 text--darken-3': subscribed },
@@ -155,6 +170,7 @@ export default {
     errored: false,
     subscribed: false,
     subscribeLoading: false,
+    showSubBtn: true,
     url: process.env.VUE_APP_URL,
     items: ['Home', 'Videos', 'Playlists', 'Community', 'Channels', 'about'],
     videos: {},
@@ -170,21 +186,29 @@ export default {
     SigninModal
   },
   methods: {
-    async getChannel() {
+    async getChannel(id) {
       // console.log(this.$route.params.id)
       this.loading = true
       this.errored = false
 
-      const channel = await UserService.getById(this.$route.params.id)
+      const channel = await UserService.getById(id)
         .catch((err) => {
           this.errored = true
           console.log(err)
+          this.$router.push('/')
         })
         .finally(() => (this.loading = false))
 
       if (!channel) return
       this.channel = channel.data.data
+      // console.log(channel)
+      if (this.currentUser && this.currentUser._id === this.channel._id) {
+        this.showSubBtn = false
+      } else {
+        this.showSubBtn = true
+      }
       this.getVideos()
+
       this.checkSubscription(this.channel._id)
       // console.log(channel)
     },
@@ -206,6 +230,7 @@ export default {
       this.videos = videos.data
     },
     async checkSubscription(id) {
+      if (!this.currentUser) return
       this.loading = true
       const sub = await SubscriptionService.checkSubscription({ channelId: id })
         .catch((err) => {
@@ -248,11 +273,15 @@ export default {
         this.channel.subscribers++
       }
 
-      console.log(this.subscribed)
+      // console.log(this.subscribed)
     }
   },
   mounted() {
-    this.getChannel()
+    this.getChannel(this.$route.params.id)
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.getChannel(to.params.id)
+    next()
   }
 }
 </script>

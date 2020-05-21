@@ -4,7 +4,8 @@ export default {
   getAll(data, page) {
     return Api().get(`videos/${data}`, {
       params: {
-        page
+        page,
+        limit: 12
       }
     })
   },

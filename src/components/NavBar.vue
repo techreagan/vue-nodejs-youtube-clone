@@ -185,12 +185,16 @@
               >{{ parentItem.header }}</v-subheader
             >
             <v-list-item
-              v-for="(item, i) in parentItem.pages"
+              v-for="(item, i) in parentItem.header === 'Subscriptions'
+                ? items[2].pages.slice(0, channelLength)
+                : parentItem.pages"
               :key="item.title"
-              link
               class="mb-0"
-              router
-              :to="item.link"
+              :to="
+                parentItem.header === 'Subscriptions'
+                  ? '/channels/' + item.channelId._id
+                  : item.link
+              "
               exact
               active-class="active-item"
             >
@@ -198,16 +202,57 @@
                 <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-icon>
               <v-list-item-avatar v-else class="mr-5">
-                <img
-                  :src="`https://randomuser.me/api/portraits/men/${i}.jpg`"
-                />
+                {{ i }}
+                <v-avatar
+                  v-if="
+                    item.channelId.photoUrl !== 'no-photo.jpg' && item.channelId
+                  "
+                >
+                  <img
+                    :src="
+                      `${getUrl}/uploads/avatars/${item.channelId.photoUrl}`
+                    "
+                    :alt="`${item.channelId.channelName} avatar`"
+                  />
+                </v-avatar>
+                <template v-else>
+                  <v-avatar color="red">
+                    <span class="white--text headline ">
+                      {{
+                        item.channelId.channelName.split('')[0].toUpperCase()
+                      }}</span
+                    >
+                  </v-avatar>
+                </template>
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title class=" font-weight-medium subtitle-2">{{
-                  item.title
+                  parentItem.header === 'Subscriptions'
+                    ? item.channelId.channelName
+                    : item.title
                 }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
+            <!-- <template v-if=""> -->
+            <v-btn
+              id="showBtn"
+              @click="moreChannels"
+              v-if="parentItem.header === 'Subscriptions'"
+              block
+              text
+              class="text-none"
+            >
+              <v-icon>{{
+                channelLength === 3 ? 'mdi-chevron-down' : 'mdi-chevron-up'
+              }}</v-icon>
+              {{
+                channelLength === 3
+                  ? `Show ${items[2].pages.length - 3} more `
+                  : 'Show less'
+              }}</v-btn
+            >
+            <!-- </template> -->
             <v-divider class="mt-2 mb-2"></v-divider>
           </div>
 
@@ -231,6 +276,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import SubscriptionService from '@/services/SubscriptionService'
+
 export default {
   data: () => ({
     drawer: true,
@@ -282,26 +329,26 @@ export default {
       {
         header: 'Subscriptions',
         pages: [
-          {
-            title: 'Traversy Media',
-            link: '#tm',
-            icon: 'mdi-badge-account'
-          },
-          {
-            title: 'The New Boston',
-            link: '#tn',
-            icon: 'mdi-badge-account'
-          },
-          {
-            title: 'Net Ninija',
-            link: '#nn',
-            icon: 'mdi-badge-account'
-          },
-          {
-            title: 'Chris Hawks',
-            link: '#ch',
-            icon: 'mdi-badge-account'
-          }
+          // {
+          //   title: 'Traversy Media',
+          //   link: '#tm',
+          //   icon: 'mdi-badge-account'
+          // },
+          // {
+          //   title: 'The New Boston',
+          //   link: '#tn',
+          //   icon: 'mdi-badge-account'
+          // },
+          // {
+          //   title: 'Net Ninija',
+          //   link: '#nn',
+          //   icon: 'mdi-badge-account'
+          // },
+          // {
+          //   title: 'Chris Hawks',
+          //   link: '#ch',
+          //   icon: 'mdi-badge-account'
+          // }
         ]
       },
       {
@@ -362,7 +409,8 @@ export default {
       { text: 'Privacy', link: '#' },
       { text: 'Policy & Safety', link: '#' },
       { text: 'Test new features', link: '#' }
-    ]
+    ],
+    channelLength: 0
     // user: null
   }),
   computed: {
@@ -372,12 +420,25 @@ export default {
     search() {
       console.log('hello')
     },
+    async getSubscripedChannels() {
+      const channels = await SubscriptionService.getSubscripedChannels(
+        this.currentUser._id
+      ).catch((err) => console.log(err))
+      this.items[2].pages = channels.data.data
+      this.channelLength = 3
+    },
+    moreChannels() {
+      if (this.channelLength === 3)
+        this.channelLength = this.items[2].pages.length
+      else this.channelLength = 3
+    },
     signOut() {
       this.$store.dispatch('signOut')
       // this.$router.push('/')
     }
   },
   mounted() {
+    if (this.currentUser) this.getSubscripedChannels()
     // this.user = this.$store.getters.currentUser
     // console.log(this.user)
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
@@ -393,6 +454,15 @@ export default {
 <style lang="scss">
 .v-list-item__avatar {
   justify-content: center !important;
+}
+#showBtn {
+  .v-btn__content {
+    justify-content: flex-start;
+
+    i {
+      margin-right: 30px;
+    }
+  }
 }
 #navbar {
   .active-item {
