@@ -76,7 +76,7 @@ import VideoCard from '@/components/VideoCard'
 import SubscriptionService from '@/services/SubscriptionService'
 import moment from 'moment'
 export default {
-  name: 'Home',
+  name: 'Subscription',
   data: () => ({
     loading: false,
     loaded: false,

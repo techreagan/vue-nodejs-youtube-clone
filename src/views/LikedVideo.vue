@@ -76,7 +76,7 @@ import VideoCard from '@/components/VideoCard'
 import FeelingService from '@/services/FeelingService'
 import moment from 'moment'
 export default {
-  name: 'Home',
+  name: 'LikedVideo',
   data: () => ({
     loading: false,
     loaded: false,
