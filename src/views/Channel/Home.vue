@@ -216,9 +216,9 @@ export default {
       // this.getChannel()
       this.loading = true
 
-      const videos = await VideoService.getAll(
-        `public/?userId=${this.channel._id}`
-      )
+      const videos = await VideoService.getAll('public', {
+        userId: this.channel._id
+      })
         .catch((err) => {
           console.log(err)
           this.errored = true

@@ -403,7 +403,7 @@ export default {
       if (!this.loaded) {
         this.loading = true
       }
-      const videos = await VideoService.getAll('public', this.page)
+      const videos = await VideoService.getAll('public', { page: this.page })
         .catch((err) => {
           console.log(err)
           this.errored = true
