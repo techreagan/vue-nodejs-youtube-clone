@@ -7,10 +7,20 @@
             <v-list-item-avatar
               v-if="typeof comment.userId !== 'undefined'"
               size="50"
-              ><v-img
+            >
+              <v-img
+                v-if="comment.userId.photoUrl !== 'no-photo.jpg'"
+                class="elevation-6"
                 :src="`${url}/uploads/avatars/${comment.userId.photoUrl}`"
-              ></v-img
-            ></v-list-item-avatar>
+              ></v-img>
+              <v-avatar v-else color="red">
+                <span class="white--text headline ">
+                  {{
+                    comment.userId.channelName.split('')[0].toUpperCase()
+                  }}</span
+                >
+              </v-avatar>
+            </v-list-item-avatar>
             <v-list-item-content>
               <div class="d-flex mb-0">
                 <v-list-item-title
@@ -61,11 +71,21 @@
                     <v-avatar v-if="!isAuthenticated" color="primary">
                       <v-icon class="white--text">mdi-account</v-icon>
                     </v-avatar>
-                    <v-img
-                      v-else
-                      :src="`${url}/uploads/avatars/${currentUser.photoUrl}`"
-                    ></v-img
-                  ></v-list-item-avatar>
+                    <template v-else>
+                      <v-img
+                        v-if="currentUser.photoUrl !== 'no-photo.jpg'"
+                        class="elevation-6"
+                        :src="`${url}/uploads/avatars/${currentUser.photoUrl}`"
+                      ></v-img>
+                      <v-avatar v-else color="red">
+                        <span class="white--text headline ">
+                          {{
+                            currentUser.channelName.split('')[0].toUpperCase()
+                          }}</span
+                        >
+                      </v-avatar>
+                    </template>
+                  </v-list-item-avatar>
                   <v-list-item-content class="align-self-auto mt-0 pt-0">
                     <v-form :ref="`form${comment._id}`">
                       <v-text-field
@@ -122,12 +142,24 @@
                       <v-list-item-avatar
                         v-if="typeof reply !== 'undefined'"
                         size="50"
-                        ><v-img
+                      >
+                        <v-img
+                          v-if="reply.userId.photoUrl !== 'no-photo.jpg'"
+                          class="elevation-6"
                           :src="
                             `${url}/uploads/avatars/${reply.userId.photoUrl}`
                           "
-                        ></v-img
-                      ></v-list-item-avatar>
+                        ></v-img>
+                        <v-avatar v-else color="red">
+                          <span class="white--text headline ">
+                            {{
+                              reply.userId.channelName
+                                .split('')[0]
+                                .toUpperCase()
+                            }}</span
+                          >
+                        </v-avatar>
+                      </v-list-item-avatar>
                       <v-list-item-content>
                         <div class="d-flex mb-0">
                           <v-list-item-title
