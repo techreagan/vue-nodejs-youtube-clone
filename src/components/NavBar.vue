@@ -289,7 +289,7 @@ export default {
           { title: 'Trending', link: '/trending', icon: 'mdi-fire' },
           {
             title: 'Subscriptions',
-            link: '#s',
+            link: '/subscriptions',
             icon: 'mdi-youtube-subscription'
           }
         ]
@@ -321,7 +321,7 @@ export default {
 
           {
             title: 'Liked videos',
-            link: '#lw',
+            link: '/liked-videos',
             icon: 'mdi-thumb-up'
           }
         ]

@@ -15,6 +15,24 @@ const routes = [
     }
   },
   {
+    path: '/subscriptions',
+    name: 'Subscription',
+    components: {
+      NavBar,
+      default: () =>
+        import(/* webpackChunkName: "about" */ '../views/Subscription.vue')
+    }
+  },
+  {
+    path: '/liked-videos',
+    name: 'LikedVideos',
+    components: {
+      NavBar,
+      default: () =>
+        import(/* webpackChunkName: "about" */ '../views/LikedVideo.vue')
+    }
+  },
+  {
     path: '/signin',
     name: 'SignIn',
     component: () =>

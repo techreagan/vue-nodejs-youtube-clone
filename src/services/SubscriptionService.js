@@ -14,5 +14,13 @@ export default {
   },
   createSubscription(data) {
     return Api().post('subscriptions', data)
+  },
+  getSubscripedVideos(page) {
+    return Api().get('subscriptions/videos', {
+      params: {
+        page,
+        limit: 12
+      }
+    })
   }
 }
