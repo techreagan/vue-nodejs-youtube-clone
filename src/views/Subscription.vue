@@ -91,7 +91,7 @@ export default {
         this.loading = true
       }
 
-      const videos = await SubscriptionService.getSubscripedVideos(this.page)
+      const videos = await SubscriptionService.getSubscribedVideos(this.page)
         .catch((err) => {
           console.log(err)
           this.errored = true

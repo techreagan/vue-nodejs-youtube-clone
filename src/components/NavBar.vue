@@ -420,8 +420,8 @@ export default {
     search() {
       console.log('hello')
     },
-    async getSubscripedChannels() {
-      const channels = await SubscriptionService.getSubscripedChannels(
+    async getSubscribedChannels() {
+      const channels = await SubscriptionService.getSubscribedChannels(
         this.currentUser._id
       ).catch((err) => console.log(err))
       this.items[2].pages = channels.data.data
@@ -438,7 +438,7 @@ export default {
     }
   },
   mounted() {
-    if (this.currentUser) this.getSubscripedChannels()
+    if (this.currentUser) this.getSubscribedChannels()
     // this.user = this.$store.getters.currentUser
     // console.log(this.user)
     this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true

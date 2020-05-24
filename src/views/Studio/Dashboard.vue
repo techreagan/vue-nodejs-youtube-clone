@@ -155,24 +155,43 @@
             </v-card-actions>
           </v-card>
         </v-col>
+        <v-col cols="12" sm="6" md="4">
+          <v-card class="mx-auto" outlined>
+            <v-card-title class="pl-5">Recent subscribers</v-card-title>
+
+            <v-card-actions class="d-block ml-2">
+              <v-btn color="blue" text @click="subscribersDialog = true">
+                See all
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
       </v-row>
     </v-container>
     <upload-video-modal
       :open-dialog="dialog"
       v-on:closeDialog="dialog = false"
     />
+    <subscribers-modal
+      :open-dialog="subscribersDialog"
+      @closeDialog="subscribersDialog = false"
+    />
   </div>
 </template>
 
 <script>
 import UploadVideoModal from '@/components/UploadVideoModal'
+import SubscribersModal from '@/components/SubscribersModal'
+
 export default {
   data: () => ({
     loading: true,
-    dialog: false
+    dialog: false,
+    subscribersDialog: false
   }),
   components: {
-    UploadVideoModal
+    UploadVideoModal,
+    SubscribersModal
   },
   mounted() {}
 }

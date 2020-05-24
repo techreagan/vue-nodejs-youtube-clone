@@ -1,11 +1,18 @@
 import Api from '@/services/Api'
 
 export default {
-  getSubscripedChannels(subscriberId) {
+  getSubscribedChannels(subscriberId) {
     return Api().get('subscriptions/channels', {
       params: {
         subscriberId,
         select: 'channelId'
+      }
+    })
+  },
+  getSubscribers(limit) {
+    return Api().get('subscriptions/subscribers', {
+      params: {
+        limit
       }
     })
   },
@@ -15,7 +22,7 @@ export default {
   createSubscription(data) {
     return Api().post('subscriptions', data)
   },
-  getSubscripedVideos(page) {
+  getSubscribedVideos(page) {
     return Api().get('subscriptions/videos', {
       params: {
         page,
