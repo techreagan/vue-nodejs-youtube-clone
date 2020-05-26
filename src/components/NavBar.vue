@@ -15,6 +15,7 @@
         placeholder="Search"
         outlined
         dense
+        v-model="searchText"
         @click:append="search"
         class="hidden-sm-and-down"
       ></v-text-field>
@@ -410,7 +411,8 @@ export default {
       { text: 'Policy & Safety', link: '#' },
       { text: 'Test new features', link: '#' }
     ],
-    channelLength: 0
+    channelLength: 0,
+    searchText: ''
     // user: null
   }),
   computed: {
@@ -418,7 +420,14 @@ export default {
   },
   methods: {
     search() {
-      console.log('hello')
+      if (!this.searchText) return
+      // console.log(this.searchText == this.$route.query['search-query'])
+      if (this.searchText == this.$route.query['search-query']) return
+      // this.searchText = this.$route.query['search-query']
+      this.$router.push({
+        name: 'Search',
+        query: { 'search-query': this.searchText }
+      })
     },
     async getSubscribedChannels() {
       const channels = await SubscriptionService.getSubscribedChannels(
@@ -437,7 +446,26 @@ export default {
       // this.$router.push('/')
     }
   },
+  // beforeRouteLeave(to, from, next) {
+  //   this.searchText = ''
+  //   next()
+  // },
+  // beforeRouteUpdate(to, from, next) {
+  //   if (!to.query['search-query'] === '') return
+  //   this.searchText = to.query['search-query']
+  //   next()
+  // },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (!to.query['search-query'] === '') return
+      vm.searchText = to.query['search-query']
+      // vm.getSearchResults(to.query['search-query'])
+    })
+  },
   mounted() {
+    // if (this.$route.query['search-query'])
+    //   this.searchText = this.$route.query['search-query']
+
     if (this.currentUser) this.getSubscribedChannels()
     // this.user = this.$store.getters.currentUser
     // console.log(this.user)

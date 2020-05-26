@@ -109,6 +109,24 @@ const routes = [
       default: () =>
         import(/* webpackChunkName: "video" */ '../views/Watch.vue')
     }
+  },
+  {
+    path: '/history',
+    name: 'History',
+    components: {
+      NavBar,
+      default: () =>
+        import(/* webpackChunkName: "video" */ '../views/History.vue')
+    }
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    components: {
+      NavBar,
+      default: () =>
+        import(/* webpackChunkName: "video" */ '../views/Search.vue')
+    }
   }
 ]
 
