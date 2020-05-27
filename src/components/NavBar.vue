@@ -278,6 +278,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import SubscriptionService from '@/services/SubscriptionService'
+import HistoryService from '@/services/HistoryService'
 
 export default {
   data: () => ({
@@ -305,7 +306,7 @@ export default {
           },
           {
             title: 'History',
-            link: '#h',
+            link: '/history',
             icon: 'mdi-history'
           },
           {
@@ -419,11 +420,18 @@ export default {
     ...mapGetters(['currentUser', 'getUrl'])
   },
   methods: {
-    search() {
+    async search() {
       if (!this.searchText) return
       // console.log(this.searchText == this.$route.query['search-query'])
       if (this.searchText == this.$route.query['search-query']) return
       // this.searchText = this.$route.query['search-query']
+      const data = {
+        type: 'search',
+        searchText: this.searchText
+      }
+
+      await HistoryService.createHistory(data).catch((err) => console.log(err))
+
       this.$router.push({
         name: 'Search',
         query: { 'search-query': this.searchText }

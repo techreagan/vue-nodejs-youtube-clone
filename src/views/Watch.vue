@@ -330,6 +330,7 @@ import InfiniteLoading from 'vue-infinite-loading'
 import VideoService from '@/services/VideoService'
 import SubscriptionService from '@/services/SubscriptionService'
 import FeelingService from '@/services/FeelingService'
+import HistoryService from '@/services/HistoryService'
 
 import SigninModal from '@/components/SigninModal'
 import AddComment from '@/components/comments/AddComment'
@@ -397,6 +398,13 @@ export default {
         this.video.status !== 'public'
       )
         return this.$router.push('/')
+
+      const data = {
+        type: 'watch',
+        videoId: this.video._id
+      }
+
+      await HistoryService.createHistory(data).catch((err) => console.log(err))
     },
     async getVideos($state) {
       this.errored = false
@@ -575,8 +583,9 @@ export default {
     SigninModal,
     InfiniteLoading
   },
-  mounted() {
+  async mounted() {
     this.getVideo()
+
     // this.actions()
     // console.log(this.videoLoading)
   }
