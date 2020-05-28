@@ -15,6 +15,9 @@
         >
           <h1 class="title font-weight-medium pb-5">{{ historyType }}</h1>
           <template v-if="historyType == 'Watch History'">
+            <template v-if="histories.length <= 0 && !loading">
+              <p class="text-center body-1">No watch history yet.</p>
+            </template>
             <section>
               <div
                 v-for="(history, i) in loading ? 12 : histories"
@@ -49,7 +52,7 @@
                           >
                             {{ history.videoId.title }}
 
-                            <v-btn text>
+                            <v-btn text @click="deleteHistory(history._id)">
                               <v-icon>mdi-close</v-icon>
                             </v-btn>
                           </v-card-title>
@@ -103,6 +106,9 @@
             </section>
           </template>
           <template v-else>
+            <template v-if="histories.length <= 0 && !loading">
+              <p class="text-center body-1">No search history yet.</p>
+            </template>
             <div>
               <div v-for="(history, i) in loading ? 12 : histories" :key="i">
                 <v-skeleton-loader
@@ -123,7 +129,12 @@
                       }}</v-card-subtitle>
                     </v-card-text>
                     <v-card-actions
-                      ><v-btn text class="grey--text" fab>
+                      ><v-btn
+                        text
+                        class="grey--text"
+                        fab
+                        @click="deleteHistory(history._id)"
+                      >
                         <v-icon>mdi-close</v-icon>
                       </v-btn></v-card-actions
                     >
@@ -205,7 +216,9 @@
                 </v-list-item-group>
               </v-list>
               <div>
-                <v-btn text>Clear all {{ historyType }}</v-btn>
+                <v-btn text :loading="clearLoading" @click="clearHistory"
+                  >Clear all {{ historyType }}</v-btn
+                >
                 <!-- <v-btn text>Pause {{ historyType }}</v-btn>
                 <v-btn text>Manage all activity</v-btn> -->
               </div>
@@ -214,6 +227,12 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar v-model="snackbar">
+      {{ deleteMessage }}
+      <v-btn color="white" text @click="snackbar = false" icon>
+        <v-icon>mdi-close-circle</v-icon>
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -229,12 +248,14 @@ export default {
     loading: false,
     loaded: false,
     errored: false,
+    snackbar: false,
+    deleteMessage: '',
     items: ['Watch History', 'Search History'],
     historyType: 'Watch History',
     histories: [],
-    searchTexts: [],
     page: 1,
-    infiniteId: +new Date()
+    infiniteId: +new Date(),
+    clearLoading: false
   }),
   computed: {
     ...mapGetters(['currentUser', 'getUrl'])
@@ -279,13 +300,43 @@ export default {
       // this.histories = histories.data.data
       // console.log(this.histories)
     },
+    async clearHistory() {
+      this.clearLoading = true
+
+      const type = this.historyType === 'Watch History' ? 'watch' : 'search'
+
+      await HistoryService.deleteAll(type)
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.histories = this.histories.filter(
+            (history) => history.type !== type
+          )
+
+          this.clearLoading = false
+          this.deleteMessage = `${this.historyType} Cleared Successfully`
+          this.snackbar = true
+        })
+    },
+    async deleteHistory(id) {
+      this.histories = this.histories.filter(
+        (history) => history._id.toString() !== id.toString()
+      )
+      await HistoryService.deleteById(id)
+        .catch((err) => {
+          console.log(err)
+        })
+        .finally(() => {
+          this.deleteMessage = 'History Deleted Successfully'
+          this.snackbar = true
+        })
+    },
     clickItem(item) {
-      // console.log(item)
       this.historyType = item
       this.page = 1
       this.histories = []
       this.infiniteId += 1
-      // this.getHistories()
     },
     dateFormatter(date) {
       return moment(date).fromNow()
@@ -295,7 +346,7 @@ export default {
     InfiniteLoading
   },
   mounted() {
-    // this.getHistories()
+    this.getHistories()
   }
 }
 </script>

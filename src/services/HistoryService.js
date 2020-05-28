@@ -8,6 +8,9 @@ export default {
     return Api().post('histories', data)
   },
   deleteById(id) {
-    return Api().delete(`users/${id}`)
+    return Api().delete(`histories/${id}`)
+  },
+  deleteAll(type) {
+    return Api().delete(`histories/${type}/all`)
   }
 }
