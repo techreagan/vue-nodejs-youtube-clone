@@ -85,11 +85,8 @@
             md="8"
             lg="8"
           >
-            <ValidationObserver ref="form" v-slot="{ handleSubmit, reset }">
-              <form
-                @submit.prevent="handleSubmit(submit)"
-                @reset.prevent="reset"
-              >
+            <ValidationObserver ref="form">
+              <form @submit.prevent="submit">
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="Title"
@@ -324,13 +321,15 @@ export default {
         })
 
       if (!video) return
-      this.$nextTick(() => {
-        this.$refs.form.reset()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs.form.reset()
+      // })
+      this.formData.visibilty = ''
       this.imgDataUrl = ''
       this.selectedFile = []
       this.closeModal()
-      this.$router.push('/studio/videos')
+
+      this.$router.push(`/studio/videos?${new Date()}`)
       // console.log('submittied')
     },
     async getCategories() {
