@@ -81,6 +81,12 @@
                           >
                           {{ video.dislikes }}</v-btn
                         >
+                        <v-btn
+                          :href="`${url}/uploads/videos/${video.url}`"
+                          text
+                          class="grey--text text--darken-1"
+                          ><v-icon>mdi-download</v-icon> Download</v-btn
+                        >
                         <v-btn text class="grey--text text--darken-1"
                           ><v-icon>mdi-share</v-icon> Share</v-btn
                         >
@@ -242,7 +248,13 @@
                   tile
                   large
                 >
-                  <v-card class="card" tile flat v-if="!loading">
+                  <v-card
+                    class="card"
+                    tile
+                    flat
+                    v-if="!loading"
+                    :to="`/watch/${video._id}`"
+                  >
                     <v-row no-gutters>
                       <v-col class="mx-auto" cols="12" sm="12" md="5" lg="5">
                         <!-- <v-responsive max-height="100%"> -->
@@ -282,7 +294,7 @@
                 </v-skeleton-loader>
               </div>
               <!-- <v-col cols="12" sm="12" md="12" lg="12"> -->
-              <infinite-loading @infinite="getVideos">
+              <infinite-loading :identifier="infiniteId" @infinite="getVideos">
                 <div slot="spinner">
                   <v-progress-circular
                     indeterminate
@@ -347,8 +359,10 @@ export default {
     showSubBtn: true,
     feeling: '',
     video: {},
+    videoId: '',
     videos: [],
     page: 1,
+    infiniteId: +new Date(),
     truncate: true,
     url: process.env.VUE_APP_URL,
     signinDialog: false,
@@ -358,15 +372,18 @@ export default {
     ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
   },
   methods: {
-    async getVideo() {
+    async getVideo(id) {
       this.errored = false
       this.videoLoading = true
+      this.video = {}
       // console.log(this.$refs)
       try {
-        const video = await VideoService.getById(this.$route.params.id)
+        const video = await VideoService.getById(id)
 
         if (!video) return this.$router.push('/')
         this.video = video.data.data
+
+        // console.log(this.video)
       } catch (err) {
         this.errored = true
         console.log(err)
@@ -551,6 +568,17 @@ export default {
         this.video.userId.subscribers++
       }
     },
+    async updateViews(id) {
+      const views = await VideoService.updateViews(id).catch((err) => {
+        console.log(err)
+      })
+      if (!views) return
+
+      this.video.views++
+    },
+    // nextVideo(id) {
+    //   this.$router.push({ name: 'Watch', params: { id } })
+    // },
     play(e) {
       console.log(e)
     },
@@ -583,11 +611,20 @@ export default {
     SigninModal,
     InfiniteLoading
   },
-  async mounted() {
-    this.getVideo()
-
+  mounted() {
+    this.getVideo(this.$route.params.id)
+    this.updateViews(this.$route.params.id)
+    // this.getVideos()
     // this.actions()
     // console.log(this.videoLoading)
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.page = 1
+    ;(this.loading = false), (this.loaded = false), (this.videos = [])
+    this.infiniteId += 1
+    this.getVideo(to.params.id)
+    // this.getVideos()
+    next()
   }
 }
 </script>

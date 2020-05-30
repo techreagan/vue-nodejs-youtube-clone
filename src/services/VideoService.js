@@ -15,6 +15,9 @@ export default {
   updateVideo(id, data) {
     return Api().put(`videos/${id}`, data)
   },
+  updateViews(id) {
+    return Api().put(`videos/${id}/views`)
+  },
   uploadThumbnail(id, data) {
     return Api().put(`videos/${id}/thumbnails`, data)
   },

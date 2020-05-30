@@ -182,7 +182,7 @@ export default {
     async getVideos() {
       this.loading = true
 
-      const videos = await VideoService.getAll('private')
+      const videos = await VideoService.getAll('private', { limit: 0 })
         .catch((err) => {
           console.log(err)
         })
@@ -219,38 +219,10 @@ export default {
   },
   mounted() {
     this.getVideos()
-    // setTimeout(() => {
-    //   this.loading = false
-    //   this.videos = [
-    //     {
-    //       'name': 'Day 44',
-    //       'visibility': 'public',
-    //       'restrictions': 'none',
-    //       'views': 10,
-    //       'comments': 5,
-    //       'likes (vs. dislikes)': 10,
-    //       'id': 12233
-    //     },
-    //     {
-    //       'name': 'Day 45',
-    //       'visibility': 'public',
-    //       'restrictions': 'none',
-    //       'views': 13,
-    //       'comments': 15,
-    //       'likes (vs. dislikes)': 20,
-    //       'id': 12234
-    //     },
-    //     {
-    //       'name': 'Day 46',
-    //       'visibility': 'public',
-    //       'restrictions': 'none',
-    //       'views': 10,
-    //       'comments': 45,
-    //       'likes (vs. dislikes)': 60,
-    //       'id': 122133
-    //     }
-    //   ]
-    // }, 2000)
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.getVideos()
+    next()
   }
 }
 </script>

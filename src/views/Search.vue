@@ -34,6 +34,7 @@
               large
             >
               <v-card
+                :to="`/channels/${result._id}`"
                 class="card mb-10"
                 v-if="typeof result.channelName !== 'undefined'"
                 tile
@@ -42,6 +43,7 @@
                 <v-row no-gutters justify="center">
                   <v-col cols="10" sm="10" md="3" lg="3" class="d-flex">
                     <!-- <v-responsive max-height="100%"> -->
+
                     <v-avatar size="120" max-width="150" class="mx-auto red">
                       <img
                         v-if="result.photoUrl !== 'no-photo.jpg'"
@@ -71,24 +73,32 @@
                       style="line-height: 1.2"
                     >
                       {{ result.subscribers }}
-                      subscribers<v-icon>mdi-circle-small</v-icon>700 videos
+                      subscribers<v-icon>mdi-circle-small</v-icon
+                      >{{ result.videos }} videos
                     </v-card-subtitle>
                     <v-card-subtitle class="pl-2 pt-2 pb-0">
                       {{ result.description }}
                     </v-card-subtitle>
                     <!-- </div> -->
                   </v-col>
-                  <v-col cols="10" sm="10" md="3" lg="3">
+
+                  <!-- <v-col cols="10" sm="10" md="3" lg="3">
                     <v-btn class="red white--text mt-6" tile depressed
                       >Subscribed</v-btn
                     >
                     <v-btn icon class="ml-5 mt-6"
                       ><v-icon>mdi-bell</v-icon></v-btn
                     >
-                  </v-col>
+                  </v-col> -->
                 </v-row>
               </v-card>
-              <v-card class="card mb-10" tile flat v-else>
+              <v-card
+                :to="`/watch/${result._id}`"
+                class="card mb-10"
+                tile
+                flat
+                v-else
+              >
                 <v-row no-gutters v-if="result.userId">
                   <v-col cols="5" sm="3" md="3" lg="3">
                     <!-- <v-responsive max-height="100%"> -->

@@ -14,7 +14,7 @@
     <v-row no-gutters>
       <v-col cols="2" v-if="card.type != 'noAvatar'">
         <v-list-item class="pl-0 pt-3" router :to="`/channels/${channel._id}`">
-          <v-list-item-avatar color="grey darken-3">
+          <v-list-item-avatar>
             <v-img
               v-if="channel.photoUrl !== 'no-photo.jpg'"
               class="elevation-6"
