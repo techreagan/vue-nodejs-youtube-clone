@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- <div v-if="!comments.length">
+      <p>No comment yet, leave a comment</p>
+    </div> -->
     <div v-for="(comment, i) in loading ? 4 : comments" :key="comment._id">
       <v-skeleton-loader type="list-item-avatar-two-line" :loading="loading">
         <v-card class="transparent" flat>
@@ -229,6 +232,7 @@ export default {
     return {
       repliesInput: {},
       comments: this.$store.getters.getComments.data,
+      commentsLength: false,
       index: -1,
       btnLoading: false,
       url: process.env.VUE_APP_URL,
@@ -250,6 +254,7 @@ export default {
       if (!comments) return
 
       this.comments = this.$store.getters.getComments.data
+      // console.log(this.comments.length)
       // this.loading = false
       // console.log(this.$store.getters.getComments.data)
     },
@@ -336,6 +341,7 @@ export default {
 
   mounted() {
     this.getComments()
+    // console.log(this.comments)
   }
 }
 </script>

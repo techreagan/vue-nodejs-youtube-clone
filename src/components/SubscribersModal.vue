@@ -105,7 +105,7 @@ export default {
       if (!subscribers) return
       this.subscribers = subscribers.data.data
 
-      console.log(subscribers)
+      // console.log(subscribers)
     },
     // initialize() {
     //   this.subscribers = [
