@@ -48,12 +48,12 @@
             >
             <v-list-item-title>Upload video</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <!-- <v-list-item>
             <v-list-item-icon class="mr-3"
               ><v-icon>mdi-access-point</v-icon></v-list-item-icon
             >
             <v-list-item-title>Go live</v-list-item-title>
-          </v-list-item>
+          </v-list-item> -->
         </v-list>
       </v-menu>
 
@@ -266,38 +266,38 @@ export default {
             title: 'Videos',
             link: '/studio/videos',
             icon: 'mdi-play-box-multiple'
-          },
-          {
-            title: 'Playlists',
-            link: '#p',
-            icon: 'mdi-playlist-play'
-          },
-          {
-            title: 'Analytics',
-            link: '#a',
-            icon: 'mdi-poll-box'
-          },
-          {
-            title: 'Comments',
-            link: '#c',
-            icon: 'mdi-message-reply-text'
-          },
-
-          {
-            title: 'Subtitles',
-            link: '#s',
-            icon: 'mdi-subtitles'
-          },
-          {
-            title: 'Monetization',
-            link: '#m',
-            icon: 'mdi-currency-usd'
-          },
-          {
-            title: 'Audio library',
-            link: '#al',
-            icon: 'mdi-music-box-multiple'
           }
+          // {
+          //   title: 'Playlists',
+          //   link: '#p',
+          //   icon: 'mdi-playlist-play'
+          // },
+          // {
+          //   title: 'Analytics',
+          //   link: '#a',
+          //   icon: 'mdi-poll-box'
+          // },
+          // {
+          //   title: 'Comments',
+          //   link: '#c',
+          //   icon: 'mdi-message-reply-text'
+          // },
+
+          // {
+          //   title: 'Subtitles',
+          //   link: '#s',
+          //   icon: 'mdi-subtitles'
+          // },
+          // {
+          //   title: 'Monetization',
+          //   link: '#m',
+          //   icon: 'mdi-currency-usd'
+          // },
+          // {
+          //   title: 'Audio library',
+          //   link: '#al',
+          //   icon: 'mdi-music-box-multiple'
+          // }
         ]
       },
       {

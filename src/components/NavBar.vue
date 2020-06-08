@@ -17,7 +17,6 @@
         dense
         v-model="searchText"
         @click:append="search"
-        class="hidden-sm-and-down"
       ></v-text-field>
 
       <v-spacer></v-spacer>
@@ -26,7 +25,7 @@
         <template v-slot:activator="{ on: menu }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
-              <v-btn icon v-on="{ ...tooltip, ...menu }"
+              <v-btn icon class="mr-7" v-on="{ ...tooltip, ...menu }"
                 ><v-icon size="25">mdi-video-plus</v-icon></v-btn
               >
             </template>
@@ -40,34 +39,29 @@
             >
             <v-list-item-title>Upload video</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <!-- <v-list-item>
             <v-list-item-icon class="mr-3"
               ><v-icon>mdi-access-point</v-icon></v-list-item-icon
             >
             <v-list-item-title>Go live</v-list-item-title>
-          </v-list-item>
+          </v-list-item> -->
         </v-list>
       </v-menu>
-      <v-tooltip bottom>
+      <!-- <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on"> <v-icon size="25">mdi-apps</v-icon></v-btn>
         </template>
         <span>VueTube apps</span>
-      </v-tooltip>
-      <!-- <v-btn icon :class="{ 'mr-7': !$store.getters.isAuthenticated }">
-        <v-icon size="25">mdi-apps</v-icon>
-      </v-btn>
-      <v-btn icon class="mr-7" v-if="$store.getters.isAuthenticated">
-        <v-icon size="25">mdi-bell</v-icon>
-      </v-btn> -->
-      <v-tooltip bottom>
+      </v-tooltip> -->
+
+      <!-- <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on" class="mr-7">
             <v-icon size="25">mdi-bell</v-icon></v-btn
           >
         </template>
         <span>Notifications</span>
-      </v-tooltip>
+      </v-tooltip> -->
       <v-btn
         tile
         outlined
@@ -235,11 +229,14 @@
               </v-list-item-content>
             </v-list-item>
 
-            <!-- <template v-if=""> -->
             <v-btn
               id="showBtn"
               @click="moreChannels"
-              v-if="parentItem.header === 'Subscriptions'"
+              v-if="
+                parentItem.header === 'Subscriptions' &&
+                  isAuthenticated &&
+                  items[2].length > 0
+              "
               block
               text
               class="text-none"
@@ -253,8 +250,11 @@
                   : 'Show less'
               }}</v-btn
             >
-            <!-- </template> -->
-            <v-divider class="mt-2 mb-2"></v-divider>
+
+            <v-divider
+              v-if="parentItem.header !== false"
+              class="mt-2 mb-2"
+            ></v-divider>
           </div>
 
           <span v-for="link in links" :key="link.text">
@@ -299,27 +299,27 @@ export default {
       {
         header: null,
         pages: [
-          {
-            title: 'Library',
-            link: '#l',
-            icon: 'mdi-play-box-multiple'
-          },
+          // {
+          //   title: 'Library',
+          //   link: '#l',
+          //   icon: 'mdi-play-box-multiple'
+          // },
           {
             title: 'History',
             link: '/history',
             icon: 'mdi-history'
           },
-          {
-            title: 'Your videos',
-            link: '#yv',
-            icon: 'mdi-play-box-outline'
-          },
+          // {
+          //   title: 'Your videos',
+          //   link: '#yv',
+          //   icon: 'mdi-play-box-outline'
+          // },
 
-          {
-            title: 'Watch later',
-            link: '#wl',
-            icon: 'mdi-clock'
-          },
+          // {
+          //   title: 'Watch later',
+          //   link: '#wl',
+          //   icon: 'mdi-clock'
+          // },
 
           {
             title: 'Liked videos',
@@ -417,7 +417,7 @@ export default {
     // user: null
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl'])
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
   },
   methods: {
     async search() {
@@ -483,6 +483,11 @@ export default {
   },
   created() {
     this.drawer = this.$route.name === 'Watch' ? false : this.drawer
+
+    if (!this.isAuthenticated) {
+      this.items[2].header = false
+      this.items[0].pages.pop()
+    }
   }
 }
 </script>

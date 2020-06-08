@@ -87,12 +87,12 @@
                           class="grey--text text--darken-1"
                           ><v-icon>mdi-download</v-icon> Download</v-btn
                         >
-                        <v-btn text class="grey--text text--darken-1"
+                        <!-- <v-btn text class="grey--text text--darken-1"
                           ><v-icon>mdi-share</v-icon> Share</v-btn
                         >
                         <v-btn text class="grey--text text--darken-1"
                           ><v-icon>mdi-playlist-plus</v-icon> Save</v-btn
-                        >
+                        > -->
                       </v-card-actions>
                     </div>
                   </v-card>
@@ -613,7 +613,7 @@ export default {
   },
   mounted() {
     this.getVideo(this.$route.params.id)
-    this.updateViews(this.$route.params.id)
+    if (this.isAuthenticated) this.updateViews(this.$route.params.id)
     // this.getVideos()
     // this.actions()
     // console.log(this.videoLoading)

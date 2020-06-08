@@ -16,7 +16,7 @@
             </template>
             <span>Upload video</span>
           </v-tooltip>
-          <v-tooltip bottom>
+          <!-- <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
               <v-btn class="white" icon v-on="{ ...tooltip }"
                 ><v-icon size="25" class="small"
@@ -25,11 +25,11 @@
               >
             </template>
             <span>Go live</span>
-          </v-tooltip>
+          </v-tooltip> -->
         </div>
       </div>
       <v-row>
-        <v-col cols="12" sm="6" md="4">
+        <!-- <v-col cols="12" sm="6" md="4">
           <v-card class="mx-auto" outlined>
             <v-card-title>Latest video performance</v-card-title>
             <v-responsive class="mx-5">
@@ -154,7 +154,7 @@
               </v-btn>
             </v-card-actions>
           </v-card>
-        </v-col>
+        </v-col> -->
         <v-col cols="12" sm="6" md="4">
           <v-card class="mx-auto" outlined>
             <v-card-title class="pl-5">Recent subscribers</v-card-title>
