@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import AuthenticationService from '@/services/AuthenticationService'
+// import AuthenticationService from '@/services/AuthenticationService'
 export default {
   name: 'SignIn',
   data: () => ({
@@ -88,24 +88,40 @@ export default {
     async signin() {
       if (this.loading) return
       this.loading = true
-      const user = await AuthenticationService.signIn({
-        email: this.email,
-        password: this.password
-      }).catch(err => {
-        this.loading = false
-        console.log(err)
-        this.$refs.form.setErrors({
-          Email: ["We don't reconize, this email"],
-          Password: ["We don't reconize, this password"]
+
+      const data = await this.$store
+        .dispatch('signIn', { email: this.email, password: this.password })
+        .catch((err) => {
+          this.loading = false
+          console.log(err)
+          this.$refs.form.setErrors({
+            Email: ["We don't reconize, this email"],
+            Password: ["We don't reconize, this password"]
+          })
         })
-      })
+
+      // const user = await AuthenticationService.signIn({
+      //   email: this.email,
+      //   password: this.password
+      // }).catch(err => {
+      //   this.loading = false
+      //   console.log(err)
+      //   this.$refs.form.setErrors({
+      //     Email: ["We don't reconize, this email"],
+      //     Password: ["We don't reconize, this password"]
+      //   })
+      // })
+      if (!data) return
+      const user = await this.$store
+        .dispatch('getCurrentUser', data.token)
+        .catch((err) => console.log(err))
+
       if (!user) return
+      // const token = user.data.token
+      // this.$store.dispatch('setToken', token)
+      // const currentUser = await AuthenticationService.me(token)
 
-      const token = user.data.token
-      this.$store.dispatch('setToken', token)
-      const currentUser = await AuthenticationService.me(token)
-
-      this.$store.dispatch('signin', currentUser.data.data)
+      // this.$store.dispatch('signin', currentUser.data.data)
       this.loading = false
       this.$router.push({ name: 'Home' })
     }

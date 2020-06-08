@@ -228,7 +228,7 @@
 </template>
 
 <script>
-import AuthenticationService from '@/services/AuthenticationService'
+// import AuthenticationService from '@/services/AuthenticationService'
 export default {
   name: 'SignUp',
   data: () => ({
@@ -241,35 +241,66 @@ export default {
   methods: {
     async signUp() {
       this.loading = true
-      const user = await AuthenticationService.signUp({
-        email: this.email,
-        channelName: this.channelName,
-        password: this.password
-      }).catch(err => {
-        this.loading = false
-        const errors = err.response.data.error
 
-        this.$refs.form.setErrors({
-          'Email': errors.find(error => {
-            return error.field === 'email'
-          })
-            ? ['This email is already taken']
-            : null,
-          'Channel Name': errors.find(error => {
-            return error.field === 'channelName'
-          })
-            ? ['This channel name is already taken']
-            : null
+      const data = await this.$store
+        .dispatch('signUp', {
+          email: this.email,
+          channelName: this.channelName,
+          password: this.password
         })
-      })
+        .catch((err) => {
+          this.loading = false
+          const errors = err.response.data.error
+
+          this.$refs.form.setErrors({
+            'Email': errors.find((error) => {
+              return error.field === 'email'
+            })
+              ? ['This email is already taken']
+              : null,
+            'Channel Name': errors.find((error) => {
+              return error.field === 'channelName'
+            })
+              ? ['This channel name is already taken']
+              : null
+          })
+        })
+
+      // const user = await AuthenticationService.signUp({
+      //   email: this.email,
+      //   channelName: this.channelName,
+      //   password: this.password
+      // }).catch(err => {
+      //   this.loading = false
+      //   const errors = err.response.data.error
+
+      //   this.$refs.form.setErrors({
+      //     'Email': errors.find(error => {
+      //       return error.field === 'email'
+      //     })
+      //       ? ['This email is already taken']
+      //       : null,
+      //     'Channel Name': errors.find(error => {
+      //       return error.field === 'channelName'
+      //     })
+      //       ? ['This channel name is already taken']
+      //       : null
+      //   })
+      // })
+
+      if (!data) return
+
+      const user = await this.$store
+        .dispatch('getCurrentUser', data.token)
+        .catch((err) => console.log(err))
 
       if (!user) return
 
-      const token = user.data.token
-      this.$store.dispatch('setToken', token)
-      const currentUser = await AuthenticationService.me(token)
+      // const token = user.data.token
+      // this.$store.dispatch('setToken', token)
+      // const currentUser = await AuthenticationService.me(token)
 
-      this.$store.dispatch('signin', currentUser.data.data)
+      // this.$store.dispatch('signin', currentUser.data.data)
       this.loading = false
       this.$router.push({ name: 'Home' })
     }
