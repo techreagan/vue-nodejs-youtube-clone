@@ -9,7 +9,7 @@
   >
     <v-img
       :src="`${url}/uploads/thumbnails/${video.thumbnailUrl}`"
-      height="200px"
+
     ></v-img>
     <v-row no-gutters>
       <v-col cols="2" v-if="card.type != 'noAvatar'">
@@ -49,31 +49,31 @@
 </template>
 
 <script>
-import moment from 'moment'
+import moment from "moment";
 export default {
-  name: 'VideoCard',
+  name: "VideoCard",
   props: {
     video: {
       type: Object,
-      required: true
+      required: true,
     },
     channel: {
       type: Object,
-      required: true
+      required: true,
     },
-    card: Object
+    card: Object,
   },
   data() {
     return {
-      url: process.env.VUE_APP_URL
-    }
+      url: process.env.VUE_APP_URL,
+    };
   },
   methods: {
     dateFormatter(date) {
-      return moment(date).fromNow()
-    }
-  }
-}
+      return moment(date).fromNow();
+    },
+  },
+};
 </script>
 
 <style></style>

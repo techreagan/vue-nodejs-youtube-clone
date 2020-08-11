@@ -175,8 +175,8 @@
               @crop-success="cropSuccess"
               method="PUT"
               v-model="show"
-              :width="400"
-              :height="400"
+              :width="1280"
+              :height="720"
               :url="url"
               :headers="headers"
               img-format="jpg"
@@ -211,13 +211,13 @@
 </template>
 
 <script>
-import myUpload from 'vue-image-crop-upload'
-import VideoService from '@/services/VideoService'
-import CategoryService from '@/services/CategoryService'
+import myUpload from "vue-image-crop-upload";
+import VideoService from "@/services/VideoService";
+import CategoryService from "@/services/CategoryService";
 export default {
-  name: 'UploadModal',
-  props: ['openDialog'],
-  data: function() {
+  name: "UploadModal",
+  props: ["openDialog"],
+  data: function () {
     return {
       // dialog: this.openDialog ? this.openDialog : false,
       valid: false,
@@ -232,63 +232,63 @@ export default {
         (value) =>
           !value ||
           value.size > 5000000 ||
-          `Video size should be less than 5 MB!, ${value.size}`
+          `Video size should be less than 5 MB!, ${value.size}`,
       ],
       categoriesTitles: [],
       categories: [],
-      visibilty: ['Public', 'Private'],
+      visibilty: ["Public", "Private"],
       selectedFile: [],
       formData: {
-        id: '',
-        title: '',
-        description: '',
-        category: '',
-        visibilty: ''
+        id: "",
+        title: "",
+        description: "",
+        category: "",
+        visibilty: "",
       },
-      imgDataUrl: '',
-      url: '',
-      headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
-    }
+      imgDataUrl: "",
+      url: "",
+      headers: { Authorization: `Bearer ${this.$store.getters.getToken}` },
+    };
   },
   computed: {
     dialog() {
-      return this.openDialog
-    }
+      return this.openDialog;
+    },
   },
   methods: {
     async uploadVideo(e) {
-      const { valid } = await this.$refs.provider.validate(e)
+      const { valid } = await this.$refs.provider.validate(e);
 
-      if (!valid) return
+      if (!valid) return;
       // console.log(this.selectedFile)
 
-      this.uploading = true
-      const fd = new FormData()
-      fd.append('video', this.selectedFile, this.selectedFile.name)
+      this.uploading = true;
+      const fd = new FormData();
+      fd.append("video", this.selectedFile, this.selectedFile.name);
 
       let video = await VideoService.uploadVideo(fd, {
         onUploadProgress: (uploadEvent) => {
           this.value = Math.round(
             (uploadEvent.loaded / uploadEvent.total) * 100
-          )
-        }
+          );
+        },
       })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         })
         .finally(() => {
-          this.uploaded = true
-          this.uploading = false
-        })
+          this.uploaded = true;
+          this.uploading = false;
+        });
 
-      if (!video) return
-      video = video.data.data
+      if (!video) return;
+      video = video.data.data;
 
-      this.formData.id = video._id
-      this.formData.title = video.title
-      this.formData.description = video.description
-      this.formData.cateogry = video.cateogry
-      this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`
+      this.formData.id = video._id;
+      this.formData.title = video.title;
+      this.formData.description = video.description;
+      this.formData.cateogry = video.cateogry;
+      this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
       // this.interval = setInterval(() => {
       //   if (this.value === 100) {
       //     this.uploaded = true
@@ -300,73 +300,73 @@ export default {
       // }
     },
     async submit() {
-      if (this.imgDataUrl == '') return
-      this.submitLoading = true
+      if (this.imgDataUrl == "") return;
+      this.submitLoading = true;
       this.formData.category = this.categories.find(
         (category) => category.title === this.formData.category
-      )._id
+      )._id;
 
       const video = await VideoService.updateVideo(this.formData.id, {
         title: this.formData.title,
         description: this.formData.description,
         categoryId: this.formData.category,
-        status: this.formData.visibilty.toLowerCase()
+        status: this.formData.visibilty.toLowerCase(),
       })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         })
         .finally(() => {
-          this.submitLoading = false
-          this.uploaded = false
-        })
+          this.submitLoading = false;
+          this.uploaded = false;
+        });
 
-      if (!video) return
+      if (!video) return;
       // this.$nextTick(() => {
       //   this.$refs.form.reset()
       // })
-      this.formData.visibilty = ''
-      this.imgDataUrl = ''
-      this.selectedFile = []
-      this.closeModal()
+      this.formData.visibilty = "";
+      this.imgDataUrl = "";
+      this.selectedFile = [];
+      this.closeModal();
 
-      this.$router.push(`/studio/videos?${new Date()}`)
+      this.$router.push(`/studio/videos?${new Date()}`);
       // console.log('submittied')
     },
     async getCategories() {
-      this.categoryLoading = true
+      this.categoryLoading = true;
       const categories = await CategoryService.getAll()
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         })
-        .finally(() => (this.categoryLoading = false))
+        .finally(() => (this.categoryLoading = false));
 
       this.categoriesTitles = categories.data.data.map((category) => {
-        return category.title
-      })
-      this.categories = categories.data.data
+        return category.title;
+      });
+      this.categories = categories.data.data;
     },
     closeModal() {
-      this.$emit('closeDialog')
+      this.$emit("closeDialog");
     },
     selectFile() {
-      this.$refs.fileInput.$refs.input.click()
+      this.$refs.fileInput.$refs.input.click();
     },
     toggleShow() {
-      this.show = !this.show
+      this.show = !this.show;
     },
     cropSuccess(imgDataUrl, field) {
-      console.log('-------- crop success --------')
-      console.log(field)
-      this.imgDataUrl = imgDataUrl
-    }
+      console.log("-------- crop success --------");
+      console.log(field);
+      this.imgDataUrl = imgDataUrl;
+    },
   },
   components: {
-    myUpload
+    myUpload,
   },
   mounted() {
-    this.getCategories()
-  }
-}
+    this.getCategories();
+  },
+};
 </script>
 
 <style lang="scss">

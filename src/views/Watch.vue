@@ -376,14 +376,11 @@ export default {
       this.errored = false
       this.videoLoading = true
       this.video = {}
-      // console.log(this.$refs)
       try {
         const video = await VideoService.getById(id)
 
         if (!video) return this.$router.push('/')
         this.video = video.data.data
-
-        // console.log(this.video)
       } catch (err) {
         this.errored = true
         console.log(err)
@@ -391,23 +388,13 @@ export default {
         this.videoLoading = false
         this.checkSubscription(this.video.userId._id)
         this.checkFeeling(this.video._id)
-        // console.log(this.videoLoading)
-        // if (!this.videoLoading) {
-        // console.log(this.$refs['hello'])
-        // }
-        // setInterval(() => {
-
-        // }, 1000)
       }
       if (this.currentUser && this.currentUser._id === this.video.userId._id) {
         this.showSubBtn = false
       } else {
         this.showSubBtn = true
       }
-      // console.log(this.$refs)
-      //  this.$refs.videoPlayer.addEventListener('loadedmetadata', () => {
-      //   console.log(this.$fres.videoPlayer.duration)
-      // })
+
       if (!this.isAuthenticated) return
 
       if (
@@ -561,7 +548,6 @@ export default {
 
       if (!sub.data.data._id) {
         this.subscribed = false
-        // console.log(this.video.userId)
         this.video.userId.subscribers--
       } else {
         this.subscribed = true
@@ -576,15 +562,11 @@ export default {
 
       this.video.views++
     },
-    // nextVideo(id) {
-    //   this.$router.push({ name: 'Watch', params: { id } })
-    // },
     play(e) {
       console.log(e)
     },
     actions() {
       this.getVideo()
-      // this.getVideos()
     },
     show(event) {
       if (event.target.innerText === 'SHOW MORE') {
@@ -614,16 +596,12 @@ export default {
   mounted() {
     this.getVideo(this.$route.params.id)
     if (this.isAuthenticated) this.updateViews(this.$route.params.id)
-    // this.getVideos()
-    // this.actions()
-    // console.log(this.videoLoading)
   },
   beforeRouteUpdate(to, from, next) {
     this.page = 1
     ;(this.loading = false), (this.loaded = false), (this.videos = [])
     this.infiniteId += 1
     this.getVideo(to.params.id)
-    // this.getVideos()
     next()
   }
 }
@@ -632,9 +610,6 @@ export default {
 <style lang="scss">
 video {
   max-width: 100%;
-  /* min-height: 360px; */
-  /* width: 640px;
-  height: 360px; */
 }
 
 .grey-color {
@@ -643,9 +618,6 @@ video {
 
 #btns {
   border-bottom: 1px solid #e0d8d8;
-  // button {
-  //   color: #7f7f7f;
-  // }
 }
 
 button.v-btn.remove-hover-bg {

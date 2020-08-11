@@ -60,7 +60,7 @@
                             <v-col cols="3" sm="2" md="5" lg="5">
                               <v-img
                                 class="align-center"
-                                src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+                                :src="`${url}/uploads/thumbnails/${itemToDelete.thumbnailUrl}`"
                               >
                               </v-img>
                             </v-col>
@@ -77,6 +77,7 @@
                                   class="pl-2 pt-2 pb-0"
                                   style="line-height: 1"
                                 >
+
                                   Published
                                   {{ dateFormatter(itemToDelete.createdAt) }}
                                   <br />
@@ -153,8 +154,8 @@
 </template>
 
 <script>
-import VideoService from '@/services/VideoService'
-import moment from 'moment'
+import VideoService from "@/services/VideoService";
+import moment from "moment";
 export default {
   data: () => ({
     loading: false,
@@ -162,69 +163,70 @@ export default {
     snackbar: false,
     dialogDelete: false,
     tab: null,
-    search: '',
+    search: "",
+    url: process.env.VUE_APP_URL,
     headers: [
       {
-        text: 'Video',
-        align: 'start',
-        value: 'title'
+        text: "Video",
+        align: "start",
+        value: "title",
       },
-      { text: 'Visibility', value: 'status' },
-      { text: 'Views', value: 'views' },
-      { text: 'Comments', value: 'comments' },
-      { text: 'Likes (vs. dislikes)', value: 'feelings' },
-      { text: 'Actions', value: 'actions', sortable: false }
+      { text: "Visibility", value: "status" },
+      { text: "Views", value: "views" },
+      { text: "Comments", value: "comments" },
+      { text: "Likes (vs. dislikes)", value: "feelings" },
+      { text: "Actions", value: "actions", sortable: false },
     ],
     videos: [],
-    itemToDelete: {}
+    itemToDelete: {},
   }),
   methods: {
     async getVideos() {
-      this.loading = true
+      this.loading = true;
 
-      const videos = await VideoService.getAll('private', { limit: 0 })
+      const videos = await VideoService.getAll("private", { limit: 0 })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         })
-        .finally(() => (this.loading = false))
+        .finally(() => (this.loading = false));
 
-      if (!videos) return
+      if (!videos) return;
       // console.log(videos)
-      this.videos = videos.data.data
+      this.videos = videos.data.data;
     },
     editItem(item) {
-      this.$router.push({ name: `Detail`, params: { id: item.id } })
+      this.$router.push({ name: `Detail`, params: { id: item.id } });
     },
     deleteBtn(item) {
-      this.dialogDelete = true
-      this.itemToDelete = item
+      this.dialogDelete = true;
+      this.itemToDelete = item;
     },
     async deleteItem() {
-      this.deleteBtnLoading = true
+      this.deleteBtnLoading = true;
       await VideoService.deleteById(this.itemToDelete._id)
         .catch((err) => console.log(err))
         .finally(() => {
           this.videos = this.videos.filter(
             (video) => this.itemToDelete.id !== video.id
-          )
-          this.deleteBtnLoading = false
-          this.dialogDelete = false
-          this.itemToDelete = {}
-          this.snackbar = true
-        })
+          );
+          this.deleteBtnLoading = false;
+          this.dialogDelete = false;
+          this.itemToDelete = {};
+          this.snackbar = true;
+        });
     },
     dateFormatter(date) {
-      return moment(date).fromNow()
-    }
+      return moment(date).fromNow();
+    },
   },
   mounted() {
-    this.getVideos()
+    this.getVideos();
   },
   beforeRouteUpdate(to, from, next) {
-    this.getVideos()
-    next()
-  }
-}
+    this.getVideos();
+    next();
+  },
+};
 </script>
 
 <style lang="scss">

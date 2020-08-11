@@ -11,7 +11,6 @@
           :key="i"
           class="mx-lg-0 mx-md-0 mx-sm-auto mx-auto"
         >
-          <!-- <v-container> -->
           <v-skeleton-loader
             class="mx-auto"
             type="list-item-avatar-three-line"
@@ -51,7 +50,9 @@
               </v-row>
             </v-card>
           </v-skeleton-loader>
-          <!-- </v-container> -->
+        </v-col>
+        <v-col class="text-center" v-if="videos.length === 0 && !loading">
+          <p>No trending videos yet</p>
         </v-col>
         <v-col cols="12" sm="12" md="12" lg="12">
           <infinite-loading @infinite="getVideos">
@@ -89,6 +90,7 @@
 <script>
 import InfiniteLoading from 'vue-infinite-loading'
 import moment from 'moment'
+
 import { mapGetters } from 'vuex'
 
 import VideoService from '@/services/VideoService'
@@ -113,7 +115,7 @@ export default {
 
       const videos = await VideoService.getAll('public', {
         page: this.page,
-        sort: 'views'
+        sort: '-views'
       })
         .catch((err) => {
           console.log(err)
@@ -127,11 +129,8 @@ export default {
 
       if (videos.data.data.length) {
         this.page += 1
-
         this.videos.push(...videos.data.data)
-
         $state.loaded()
-
         this.loaded = true
       } else {
         $state.complete()

@@ -101,7 +101,6 @@
               >
                 <v-row no-gutters v-if="result.userId">
                   <v-col cols="5" sm="3" md="3" lg="3">
-                    <!-- <v-responsive max-height="100%"> -->
                     <v-img
                       class="align-center"
                       :src="
@@ -110,7 +109,6 @@
                       :alt="`${result.userId.channelName} avatar`"
                     >
                     </v-img>
-                    <!-- </v-responsive> -->
                   </v-col>
                   <v-col cols="7" sm="7" md="8" lg="8">
                     <div class="ml-2">
@@ -223,23 +221,11 @@ export default {
           $state.complete()
         }
       }
-      // console.log(results)
-      // this.results = results.data.data
-      // console.log(this.results)
     }
   },
   components: {
     InfiniteLoading
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next((vm) => {
-  //     console.log('hello')
-  //     if (to.query['search-query'] === '') return
-  //     vm.text = to.query['search-query']
-  //     vm.results = []
-  //     vm.getSearchResults()
-  //   })
-  // },
   beforeRouteUpdate(to, from, next) {
     // console.log(to.query['search-query'])
     if (to.query['search-query'] === '') return
@@ -247,18 +233,11 @@ export default {
     this.page = 1
     this.results = []
     this.infiniteId += 1
-    // console.log(this.text)
-    // this.results = []
-    // this.getSearchResults()
-    // this.getSearchResults(to.query['search-query'])
+
     next()
   },
   mounted() {
     this.text = this.$route.query['search-query']
-    // this.results = []
-    // if (this.$route.query['search-query'] === '') return
-    // this.getSearchResults()
-    // console.log(this.results)
   }
 }
 </script>

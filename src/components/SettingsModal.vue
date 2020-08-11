@@ -254,7 +254,7 @@ export default {
       if (!user) return
       if (
         this.formData.channelName !==
-          this.$store.getters.currentUser.channelName &&
+          this.$store.getters.currentUser.channelName ||
         this.formData.email !== this.$store.getters.currentUser.email
       ) {
         this.$store.dispatch('signOut')

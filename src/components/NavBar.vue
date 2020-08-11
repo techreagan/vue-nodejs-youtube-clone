@@ -430,7 +430,10 @@ export default {
         searchText: this.searchText
       }
 
-      await HistoryService.createHistory(data).catch((err) => console.log(err))
+      if (this.isAuthenticated)
+        await HistoryService.createHistory(data).catch((err) =>
+          console.log(err)
+        )
 
       this.$router.push({
         name: 'Search',

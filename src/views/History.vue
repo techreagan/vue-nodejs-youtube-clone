@@ -34,7 +34,6 @@
                   <v-card class="card" tile flat>
                     <v-row no-gutters v-if="history.videoId">
                       <v-col class="mx-auto" cols="3" sm="3" md="5" lg="5">
-                        <!-- <v-responsive max-height="100%"> -->
                         <v-img
                           class="align-center"
                           :src="
@@ -42,7 +41,6 @@
                           "
                         >
                         </v-img>
-                        <!-- </v-responsive> -->
                       </v-col>
                       <v-col>
                         <div class="ml-2">
@@ -296,9 +294,6 @@ export default {
           $state.complete()
         }
       }
-
-      // this.histories = histories.data.data
-      // console.log(this.histories)
     },
     async clearHistory() {
       this.clearLoading = true

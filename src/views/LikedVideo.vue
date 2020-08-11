@@ -35,6 +35,9 @@
               ></video-card>
             </v-skeleton-loader>
           </v-col>
+          <v-col class="text-center" v-if="videos.length === 0 && !loading">
+            <p>No liked videos yet</p>
+          </v-col>
           <v-col cols="12" sm="12" md="12" lg="12">
             <infinite-loading @infinite="getVideos">
               <div slot="spinner">
@@ -86,7 +89,6 @@ export default {
   }),
   methods: {
     async getVideos($state) {
-      // if (this.loading)
       if (!this.loaded) {
         this.loading = true
       }
@@ -101,21 +103,15 @@ export default {
         })
 
       if (typeof videos === 'undefined') return
-      // if (!this.loading) {
+
       if (videos.data.data.length) {
         this.page += 1
-        // console.log(this.page)
         this.videos.push(...videos.data.data)
-        // if ($state) {
         $state.loaded()
-        // }
         this.loaded = true
       } else {
-        // if ($state) {
         $state.complete()
-        // }
       }
-      // }
     },
     dateFormatter(date) {
       return moment(date).fromNow()
@@ -124,9 +120,6 @@ export default {
   components: {
     VideoCard,
     InfiniteLoading
-  },
-  mounted() {
-    // this.getVideos()
   }
 }
 </script>

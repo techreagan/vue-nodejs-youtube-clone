@@ -4,7 +4,7 @@
       <v-col cols="12" xs="12" sm="8" md="8" lg="7" class="ma-auto">
         <v-card class="" outlined :loading="loading">
           <v-row class="justify-space-between px-4 pt-6 pb-12">
-            <v-col cols="6">
+            <v-col cols="12" sm="12" md="6">
               <v-card-title class="text-center">VueTube</v-card-title>
               <v-card-subtitle class="mb-5"
                 >Create your VueTube account</v-card-subtitle
@@ -98,7 +98,7 @@
                 </ValidationObserver>
               </v-card-text>
             </v-col>
-            <v-col cols="5" class="align-self-center">
+            <v-col cols="5" class="align-self-center hidden-sm-and-down">
               <v-responsive>
                 <svg
                   id="b59c9f89-c93e-413f-a14b-776784e615e2"
@@ -228,7 +228,6 @@
 </template>
 
 <script>
-// import AuthenticationService from '@/services/AuthenticationService'
 export default {
   name: 'SignUp',
   data: () => ({
@@ -266,28 +265,6 @@ export default {
           })
         })
 
-      // const user = await AuthenticationService.signUp({
-      //   email: this.email,
-      //   channelName: this.channelName,
-      //   password: this.password
-      // }).catch(err => {
-      //   this.loading = false
-      //   const errors = err.response.data.error
-
-      //   this.$refs.form.setErrors({
-      //     'Email': errors.find(error => {
-      //       return error.field === 'email'
-      //     })
-      //       ? ['This email is already taken']
-      //       : null,
-      //     'Channel Name': errors.find(error => {
-      //       return error.field === 'channelName'
-      //     })
-      //       ? ['This channel name is already taken']
-      //       : null
-      //   })
-      // })
-
       if (!data) return
 
       const user = await this.$store
@@ -295,12 +272,6 @@ export default {
         .catch((err) => console.log(err))
 
       if (!user) return
-
-      // const token = user.data.token
-      // this.$store.dispatch('setToken', token)
-      // const currentUser = await AuthenticationService.me(token)
-
-      // this.$store.dispatch('signin', currentUser.data.data)
       this.loading = false
       this.$router.push({ name: 'Home' })
     }
