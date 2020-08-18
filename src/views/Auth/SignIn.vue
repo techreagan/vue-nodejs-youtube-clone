@@ -29,16 +29,7 @@
                     name="Password"
                     rules="required"
                   >
-                    <p class="ma-0 text-right">
-                      <v-btn
-                        text
-                        small
-                        class="pl-0 text-capitalize"
-                        color="primary"
-                        href="true"
-                        >Forget Password?</v-btn
-                      >
-                    </p>
+                    
                     <v-text-field
                       v-model="password"
                       type="password"
@@ -65,6 +56,16 @@
                       >Sign in</v-btn
                     >
                   </div>
+                  <p class="ma-0 text-right">
+                      <v-btn
+                        text
+                        small
+                        class="pl-0 text-capitalize"
+                        color="primary"
+                        href="true"
+                        >Forgot Password?</v-btn
+                      >
+                    </p>
                 </form>
               </ValidationObserver>
             </v-card-text>
