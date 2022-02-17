@@ -308,16 +308,16 @@ export default {
             link: '',
             icon: 'mdi-cog'
           },
-          {
-            title: 'Send feedback',
-            link: '#sf',
-            icon: 'mdi-history'
-          },
-          {
-            title: 'Creator Studio Classic',
-            link: '#cs',
-            icon: 'mdi-play-box-outline'
-          }
+          // {
+          //   title: 'Send feedback',
+          //   link: '#sf',
+          //   icon: 'mdi-history'
+          // },
+          // {
+          //   title: 'Creator Studio Classic',
+          //   link: '#cs',
+          //   icon: 'mdi-play-box-outline'
+          // }
         ]
       }
     ],

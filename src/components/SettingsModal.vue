@@ -75,65 +75,65 @@
               </form>
             </ValidationObserver>
 
-            <h3 class="mb-6 mt-6">Change Password</h3>
-            <ValidationObserver
-              ref="passwordForm"
-              v-slot="{ handleSubmit, reset }"
-            >
-              <form
-                @submit.prevent="handleSubmit(submitPassword)"
-                @reset.prevent="reset"
-              >
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  name="Current password"
-                  rules="required|min:5"
-                >
-                  <v-text-field
-                    v-model="formData.currentPassword"
-                    :append-icon="
-                      showCurrentPassword ? 'mdi-eye' : 'mdi-eye-off'
-                    "
-                    :error-messages="errors"
-                    :type="showCurrentPassword ? 'text' : 'password'"
-                    name="Current password"
-                    label="Current Password"
-                    filled
-                    dense
-                    hint="At least 5 characters"
-                    class="input-group--focused"
-                    @click:append="showCurrentPassword = !showCurrentPassword"
-                  ></v-text-field>
-                </ValidationProvider>
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  name="New password"
-                  rules="required|min:5"
-                >
-                  <v-text-field
-                    v-model="formData.newPassword"
-                    :append-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                    :error-messages="errors"
-                    :type="showNewPassword ? 'text' : 'password'"
-                    name="New password"
-                    label="New Password"
-                    filled
-                    dense
-                    hint="At least 5 characters"
-                    class="input-group--focused"
-                    @click:append="showNewPassword = !showNewPassword"
-                  ></v-text-field>
-                </ValidationProvider>
+<!--            <h3 class="mb-6 mt-6">Change Password</h3>-->
+<!--            <ValidationObserver-->
+<!--              ref="passwordForm"-->
+<!--              v-slot="{ handleSubmit, reset }"-->
+<!--            >-->
+<!--              <form-->
+<!--                @submit.prevent="handleSubmit(submitPassword)"-->
+<!--                @reset.prevent="reset"-->
+<!--              >-->
+<!--                <ValidationProvider-->
+<!--                  v-slot="{ errors }"-->
+<!--                  name="Current password"-->
+<!--                  rules="required|min:5"-->
+<!--                >-->
+<!--                  <v-text-field-->
+<!--                    v-model="formData.currentPassword"-->
+<!--                    :append-icon="-->
+<!--                      showCurrentPassword ? 'mdi-eye' : 'mdi-eye-off'-->
+<!--                    "-->
+<!--                    :error-messages="errors"-->
+<!--                    :type="showCurrentPassword ? 'text' : 'password'"-->
+<!--                    name="Current password"-->
+<!--                    label="Current Password"-->
+<!--                    filled-->
+<!--                    dense-->
+<!--                    hint="At least 5 characters"-->
+<!--                    class="input-group&#45;&#45;focused"-->
+<!--                    @click:append="showCurrentPassword = !showCurrentPassword"-->
+<!--                  ></v-text-field>-->
+<!--                </ValidationProvider>-->
+<!--                <ValidationProvider-->
+<!--                  v-slot="{ errors }"-->
+<!--                  name="New password"-->
+<!--                  rules="required|min:5"-->
+<!--                >-->
+<!--                  <v-text-field-->
+<!--                    v-model="formData.newPassword"-->
+<!--                    :append-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'"-->
+<!--                    :error-messages="errors"-->
+<!--                    :type="showNewPassword ? 'text' : 'password'"-->
+<!--                    name="New password"-->
+<!--                    label="New Password"-->
+<!--                    filled-->
+<!--                    dense-->
+<!--                    hint="At least 5 characters"-->
+<!--                    class="input-group&#45;&#45;focused"-->
+<!--                    @click:append="showNewPassword = !showNewPassword"-->
+<!--                  ></v-text-field>-->
+<!--                </ValidationProvider>-->
 
-                <v-btn
-                  :loading="loading.password"
-                  type="submit"
-                  class="primary"
-                  depressed
-                  >Submit</v-btn
-                >
-              </form>
-            </ValidationObserver>
+<!--                <v-btn-->
+<!--                  :loading="loading.password"-->
+<!--                  type="submit"-->
+<!--                  class="primary"-->
+<!--                  depressed-->
+<!--                  >Submit</v-btn-->
+<!--                >-->
+<!--              </form>-->
+<!--            </ValidationObserver>-->
           </v-col>
           <v-col
             order-sm="1"

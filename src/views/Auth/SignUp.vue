@@ -42,6 +42,7 @@
                         dense
                       ></v-text-field>
                     </ValidationProvider>
+                    <!--password-->
                     <v-row>
                       <v-col cols="6">
                         <ValidationProvider

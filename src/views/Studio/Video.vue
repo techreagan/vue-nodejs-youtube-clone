@@ -8,9 +8,9 @@
       <v-tab>
         Uploads
       </v-tab>
-      <v-tab>
-        Live
-      </v-tab>
+<!--      <v-tab>-->
+<!--        Live-->
+<!--      </v-tab>-->
     </v-tabs>
 
     <v-tabs-items v-model="tab">
@@ -138,9 +138,9 @@
           </v-card>
         </template>
       </v-tab-item>
-      <v-tab-item>
-        live
-      </v-tab-item>
+<!--      <v-tab-item>-->
+<!--        live-->
+<!--      </v-tab-item>-->
     </v-tabs-items>
     <!-- </v-row> -->
     <!-- </v-container> -->

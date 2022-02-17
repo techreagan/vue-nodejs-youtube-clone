@@ -24,6 +24,7 @@
                       outlined
                     ></v-text-field>
                   </ValidationProvider>
+                  <!--password-->
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="Password"
