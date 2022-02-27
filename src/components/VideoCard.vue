@@ -1,14 +1,14 @@
 <template>
   <v-card
-    class="content-bg card mx-auto"
-    :max-width="card.maxWidth"
-    flat
-    tile
-    router
-    :to="`/watch/${video._id}`"
+      class="content-bg card mx-auto"
+      :max-width="card.maxWidth"
+      flat
+      tile
+      router
+      :to="`/watch/${video._id}`"
   >
     <v-img
-      :src="`${url}/uploads/thumbnails/${video.thumbnailUrl}`"
+        :src="`${getImgUrl}/uploads/thumbnails/${video.thumbnailUrl}`"
 
     ></v-img>
     <v-row no-gutters>
@@ -16,9 +16,9 @@
         <v-list-item class="pl-0 pt-3" router :to="`/channels/${channel._id}`">
           <v-list-item-avatar>
             <v-img
-              v-if="channel.photoUrl !== 'no-photo.jpg'"
-              class="elevation-6"
-              :src="`${url}/uploads/avatars/${channel.photoUrl}`"
+                v-if="channel.photoUrl !== 'no-photo.jpg'"
+                class="elevation-6"
+                :src="`${getImgUrl}/uploads/avatars/${channel.photoUrl}`"
             ></v-img>
             <v-avatar v-else color="red">
               <span class="white--text headline ">
@@ -30,8 +30,8 @@
       </v-col>
       <v-col>
         <v-card-title
-          class="pl-2 pt-3 subtitle-1 font-weight-bold"
-          style="line-height: 1.2rem"
+            class="pl-2 pt-3 subtitle-1 font-weight-bold"
+            style="line-height: 1.2rem"
         >
           {{ video.title }}
         </v-card-title>
@@ -40,8 +40,11 @@
           {{ channel.name }}
         </v-card-subtitle>
         <v-card-subtitle class="pl-2 pt-0">
-          {{ video.views }} views<v-icon>mdi-circle-small</v-icon
-          >{{ dateFormatter(video.createdAt) }}
+          {{ video.views }} views
+          <v-icon>mdi-circle-small
+          </v-icon
+          >
+          {{ dateFormatter(video.createdAt) }}
         </v-card-subtitle>
       </v-col>
     </v-row>
@@ -50,6 +53,8 @@
 
 <script>
 import moment from "moment";
+import {mapGetters} from "vuex";
+
 export default {
   name: "VideoCard",
   props: {
@@ -65,8 +70,11 @@ export default {
   },
   data() {
     return {
-      url: process.env.VUE_APP_URL,
+      // url: process.env.VUE_APP_URL,
     };
+  },
+  computed: {
+    ...mapGetters(['getImgUrl']),
   },
   methods: {
     dateFormatter(date) {

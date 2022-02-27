@@ -158,6 +158,7 @@
               :noRotate="false"
               img-format="jpg"
               langType="en"
+              :maxSize="1024"
             ></my-upload>
             <v-responsive
               width="230"
@@ -183,6 +184,7 @@
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 import myUpload from 'vue-image-crop-upload'
+import {mapGetters} from "vuex";
 
 export default {
   name: 'SettingsModal',
@@ -213,12 +215,13 @@ export default {
         personalInfo: false,
         password: false
       },
-      imgDataUrl: `${process.env.VUE_APP_URL}/uploads/avatars/${this.$store.getters.currentUser.photoUrl}`,
-      url: `${process.env.VUE_APP_URL}/api/v1/auth/avatar`,
+      imgDataUrl: `${this.getImgUrl}/uploads/avatars/${this.$store.getters.currentUser.photoUrl}`,
+      url: `${this.getImgUrl}/api/v1/auth/avatar`,
       headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
     }
   },
   computed: {
+    ...mapGetters(["getUrl","getImgUrl"]),
     dialog() {
       return this.openDialog
     }

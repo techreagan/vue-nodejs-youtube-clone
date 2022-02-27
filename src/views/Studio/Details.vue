@@ -3,7 +3,10 @@
     <v-container>
       <!-- <div class="d-flex justify-space-between mb-5"> -->
       <v-btn text small class="pl-0" @click="$router.go(-1)"
-        ><v-icon left>mdi-arrow-left</v-icon> Channel videos</v-btn
+      >
+        <v-icon left>mdi-arrow-left</v-icon>
+        Channel videos
+      </v-btn
       >
       <h2 class="mt-5">Video details</h2>
       <v-row>
@@ -11,78 +14,79 @@
           <ValidationObserver ref="form" v-slot="{ handleSubmit, reset }">
             <form @submit.prevent="handleSubmit(submit)" @reset.prevent="reset">
               <ValidationProvider
-                v-slot="{ errors }"
-                name="Title"
-                rules="required|min:3"
+                  v-slot="{ errors }"
+                  name="Title"
+                  rules="required|min:3"
               >
                 <v-text-field
-                  :loading="inputLoading"
-                  v-model="formData.title"
-                  :error-messages="errors"
-                  label="Title (required)"
-                  class="mb-3"
-                  filled
-                  dense
-                  counter="100"
-                  max-length="100"
+                    :loading="inputLoading"
+                    v-model="formData.title"
+                    :error-messages="errors"
+                    label="Title (required)"
+                    class="mb-3"
+                    filled
+                    dense
+                    counter="100"
+                    max-length="100"
                 ></v-text-field>
               </ValidationProvider>
               <ValidationProvider
-                v-slot="{ errors }"
-                name="Description"
-                rules="required|min:3"
+                  v-slot="{ errors }"
+                  name="Description"
+                  rules="required|min:3"
               >
                 <v-textarea
-                  :loading="inputLoading"
-                  filled
-                  auto-grow
-                  :error-messages="errors"
-                  label="Description"
-                  placeholder="Tell viewers about your video"
-                  rows="5"
-                  counter="5000"
-                  max-length="5000"
-                  v-model="formData.description"
-                  row-height="20"
+                    :loading="inputLoading"
+                    filled
+                    auto-grow
+                    :error-messages="errors"
+                    label="Description"
+                    placeholder="Tell viewers about your video"
+                    rows="5"
+                    counter="5000"
+                    max-length="5000"
+                    v-model="formData.description"
+                    row-height="20"
                 ></v-textarea>
               </ValidationProvider>
               <ValidationProvider
-                v-slot="{ errors }"
-                name="Visibilty"
-                rules="required|oneOf:private,public"
+                  v-slot="{ errors }"
+                  name="Visibilty"
+                  rules="required|oneOf:private,public"
               >
                 <v-select
-                  :loading="inputLoading"
-                  :items="visibility"
-                  :error-messages="errors"
-                  filled
-                  label="Visibilty"
-                  :value="formData.visibility"
-                  v-model="formData.visibility"
+                    :loading="inputLoading"
+                    :items="visibility"
+                    :error-messages="errors"
+                    filled
+                    label="Visibilty"
+                    :value="formData.visibility"
+                    v-model="formData.visibility"
                 ></v-select>
               </ValidationProvider>
               <ValidationProvider
-                v-slot="{ errors }"
-                name="Cateogry"
-                rules="required|min:3"
+                  v-slot="{ errors }"
+                  name="Cateogry"
+                  rules="required|min:3"
               >
                 <v-select
-                  :loading="categoryLoading"
-                  :items="categoriesTitles"
-                  :error-messages="errors"
-                  filled
-                  label="Categories"
-                  v-model="formData.category"
+                    :loading="categoryLoading"
+                    :items="categoriesTitles"
+                    :error-messages="errors"
+                    filled
+                    label="Categories"
+                    v-model="formData.category"
                 ></v-select>
               </ValidationProvider>
 
               <div class="mt-6 d-flex justify-space-between">
                 <v-btn
-                  :loading="submitLoading"
-                  type="submit"
-                  class="primary"
-                  depressed
-                  >Submit</v-btn
+                    :loading="submitLoading"
+                    type="submit"
+                    class="primary"
+                    depressed
+                >Submit
+                </v-btn
                 >
               </div>
             </form>
@@ -91,16 +95,17 @@
         <v-col cols="4" class="text-center">
           <v-btn text @click="toggleShow">Upload Thumbnails</v-btn>
           <my-upload
-            field="thumbnail"
-            @crop-success="cropSuccess"
-            method="PUT"
-            v-model="show"
-            :width="1280"
-            :height="720"
-            :url="url"
-            :headers="headers"
-            img-format="jpg"
-            langType="en"
+              field="thumbnail"
+              @crop-success="cropSuccess"
+              method="PUT"
+              v-model="show"
+              :width="1280"
+              :height="720"
+              :url="url"
+              :headers="headers"
+              img-format="jpg"
+              langType="en"
+              :maxSize="1024"
           ></my-upload>
           <v-responsive style="max-width: 100%">
             <div v-if="!imgDataUrl" class="px-12" id="image-placeholder">
@@ -131,9 +136,9 @@ export default {
       show: false,
       rules: [
         (value) =>
-          !value ||
-          value.size < 5000000 ||
-          'Video size should be less than 5 MB!'
+            !value ||
+            value.size < 5000000 ||
+            'Video size should be less than 5 MB!'
       ],
       categoriesTitles: [],
       categories: [],
@@ -148,19 +153,19 @@ export default {
 
       imgDataUrl: '',
       url: '',
-      headers: { Authorization: `Bearer ${this.$store.getters.getToken}` }
+      headers: {Authorization: `Bearer ${this.$store.getters.getToken}`}
     }
   },
   methods: {
     async getVideo() {
       this.inputLoading = true
       let video = await VideoService.getById(this.$route.params.id)
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          this.inputLoading = false
-        })
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => {
+            this.inputLoading = false
+          })
 
       if (!video) return
       video = video.data.data
@@ -176,7 +181,7 @@ export default {
       // if (this.$route.name === 'Dashboard')
       this.submitLoading = true
       this.formData.category = this.categories.find(
-        (category) => category.title === this.formData.category
+          (category) => category.title === this.formData.category
       )._id
       const video = await VideoService.updateVideo(this.$route.params.id, {
         title: this.formData.title,
@@ -184,10 +189,10 @@ export default {
         categoryId: this.formData.category,
         status: this.formData.visibility.toLowerCase()
       })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => (this.submitLoading = false))
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => (this.submitLoading = false))
 
       if (!video) return
 
@@ -197,10 +202,10 @@ export default {
     async getCategories() {
       this.categoryLoading = true
       const categories = await CategoryService.getAll()
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => (this.categoryLoading = false))
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => (this.categoryLoading = false))
 
       this.categoriesTitles = categories.data.data.map((category) => {
         return category.title

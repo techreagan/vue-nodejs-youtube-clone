@@ -33,7 +33,7 @@
                       style="height: 100%; width: 100%"
                     >
                       <source
-                        :src="`${url}/uploads/videos/${video.url}`"
+                        :src="`${getApi}/aurora/${video.url}`"
                         type="video/mp4"
                       />
                     </video>
@@ -82,7 +82,7 @@
                           {{ video.dislikes }}</v-btn
                         >
                         <v-btn
-                          :href="`${url}/uploads/videos/${video.url}`"
+                          :href="`${getImgUrl}/uploads/videos/${video.url}`"
                           text
                           class="grey--text text--darken-1"
                           ><v-icon>mdi-download</v-icon> Download</v-btn
@@ -262,7 +262,7 @@
                           class="align-center"
                           height="110"
                           :src="
-                            `${url}/uploads/thumbnails/${video.thumbnailUrl}`
+                            `${getImgUrl}/uploads/thumbnails/${video.thumbnailUrl}`
                           "
                         >
                         </v-img>
@@ -364,12 +364,11 @@ export default {
     page: 1,
     infiniteId: +new Date(),
     truncate: true,
-    url: process.env.VUE_APP_URL,
     signinDialog: false,
     details: {}
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated',"getImgUrl","getApi"])
   },
   methods: {
     async getVideo(id) {
@@ -594,6 +593,7 @@ export default {
     InfiniteLoading
   },
   mounted() {
+    console.log(process.env)
     this.getVideo(this.$route.params.id)
     if (this.isAuthenticated) this.updateViews(this.$route.params.id)
   },

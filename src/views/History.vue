@@ -37,7 +37,7 @@
                         <v-img
                           class="align-center"
                           :src="
-                            `${getUrl}/uploads/thumbnails/${history.videoId.thumbnailUrl}`
+                            `${getImgUrl}/uploads/thumbnails/${history.videoId.thumbnailUrl}`
                           "
                         >
                         </v-img>
@@ -256,7 +256,7 @@ export default {
     clearLoading: false
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl'])
+    ...mapGetters(['currentUser', 'getUrl',"getImgUrl"])
   },
   methods: {
     async getHistories($state) {

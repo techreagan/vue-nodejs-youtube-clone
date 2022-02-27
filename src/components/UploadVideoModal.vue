@@ -1,9 +1,9 @@
 <template>
   <v-dialog
-    v-model="dialog"
-    persistent
-    transition="fab-transition"
-    max-width="1000"
+      v-model="dialog"
+      persistent
+      transition="fab-transition"
+      max-width="1000"
   >
     <v-card>
       <div class="d-flex justify-space-between mb-5" id="modal-header">
@@ -18,179 +18,195 @@
         </div>
       </div>
 
-      <v-card-text
-        v-if="!uploaded"
-        class="d-flex flex-column align-center my-md-12 py-md-12 my-sm-8 py-sm-8 my-xs-0 py-xs-0 my-12 py-12"
-      >
-        <div v-if="!uploading" class="text-center">
-          <div>
-            <v-btn
-              icon
-              class="grey lighten-2 mb-4"
-              style="height: 104px;width: 104px;"
-              @click="selectFile"
-              ><v-icon x-large class="grey--text text--darken-1"
-                >mdi-upload</v-icon
-              ></v-btn
-            >
-          </div>
+      <!--      <v-card-text-->
+      <!--        v-if="!uploaded"-->
+      <!--        class="d-flex flex-column align-center my-md-12 py-md-12 my-sm-8 py-sm-8 my-xs-0 py-xs-0 my-12 py-12"-->
+      <!--      >-->
+      <!--        <div v-if="!uploading" class="text-center">-->
+      <!--          <div>-->
+      <!--            <v-btn-->
+      <!--              icon-->
+      <!--              class="grey lighten-2 mb-4"-->
+      <!--              style="height: 104px;width: 104px;"-->
+      <!--              @click="selectFile"-->
+      <!--              ><v-icon x-large class="grey&#45;&#45;text text&#45;&#45;darken-1"-->
+      <!--                >mdi-upload</v-icon-->
+      <!--              ></v-btn-->
+      <!--            >-->
+      <!--          </div>-->
 
-          <ValidationProvider
-            rules="required|size:5000"
-            v-slot="{ errors }"
-            name="file"
-            ref="provider"
-          >
-            <v-file-input
-              @change="uploadVideo"
-              v-model="selectedFile"
-              accept="video/mp4"
-              placeholder="Pick an video"
-              prepend-icon="mdi-video"
-              :error-messages="errors"
-              ref="fileInput"
-            ></v-file-input>
-          </ValidationProvider>
-          <v-btn
-            type="submit"
-            depressed
-            @click="$refs.fileInput.$refs.input.click()"
-            class="blue darken-3 flat white--text mt-4"
-            >Select File</v-btn
-          >
-        </div>
+      <!--          <ValidationProvider-->
+      <!--            rules="required|size:5000"-->
+      <!--            v-slot="{ errors }"-->
+      <!--            name="file"-->
+      <!--            ref="provider"-->
+      <!--          >-->
+      <!--            <v-file-input-->
+      <!--              @change="uploadVideo"-->
+      <!--              v-model="selectedFile"-->
+      <!--              accept="video/mp4"-->
+      <!--              placeholder="Pick an video"-->
+      <!--              prepend-icon="mdi-video"-->
+      <!--              :error-messages="errors"-->
+      <!--              ref="fileInput"-->
+      <!--            ></v-file-input>-->
+      <!--          </ValidationProvider>-->
+      <!--          <v-btn-->
+      <!--            type="submit"-->
+      <!--            depressed-->
+      <!--            @click="$refs.fileInput.$refs.input.click()"-->
+      <!--            class="blue darken-3 flat white&#45;&#45;text mt-4"-->
+      <!--            >Select File</v-btn-->
+      <!--          >-->
+      <!--        </div>-->
 
-        <v-progress-circular
-          v-else
-          :rotate="360"
-          :size="100"
-          :width="15"
-          :value="value"
-          color="teal"
-        >
-          {{ value }}
-        </v-progress-circular>
-      </v-card-text>
-      <v-card-text v-else>
+      <!--        <v-progress-circular-->
+      <!--          v-else-->
+      <!--          :rotate="360"-->
+      <!--          :size="100"-->
+      <!--          :width="15"-->
+      <!--          :value="value"-->
+      <!--          color="teal"-->
+      <!--        >-->
+      <!--          {{ value }}-->
+      <!--        </v-progress-circular>-->
+      <!--      </v-card-text>-->
+      <v-card-text>
         <h2 class="mb-6">Details</h2>
         <v-row>
           <v-col
-            order="last"
-            order-sm="last"
-            order-md="first"
-            order-lg="first"
-            order-xl="first"
-            cols="12"
-            sm="12"
-            md="8"
-            lg="8"
+              order="last"
+              order-sm="last"
+              order-md="first"
+              order-lg="first"
+              order-xl="first"
+              cols="12"
+              sm="12"
+              md="8"
+              lg="8"
           >
             <ValidationObserver ref="form">
               <form @submit.prevent="submit">
                 <ValidationProvider
-                  v-slot="{ errors }"
-                  name="Title"
-                  rules="required|min:3"
+                    v-slot="{ errors }"
+                    name="Title"
+                    rules="required|min:3"
                 >
                   <v-text-field
-                    v-model="formData.title"
-                    :error-messages="errors"
-                    label="Title (required)"
-                    class="mb-3"
-                    filled
-                    dense
-                    counter="100"
-                    max-length="100"
+                      v-model="formData.title"
+                      :error-messages="errors"
+                      label="Title (required)"
+                      class="mb-3"
+                      filled
+                      dense
+                      counter="100"
+                      max-length="100"
                   ></v-text-field>
                 </ValidationProvider>
                 <ValidationProvider
-                  v-slot="{ errors }"
-                  name="Description"
-                  rules="required|min:3"
+                    v-slot="{ errors }"
+                    name="Description"
+                    rules="required|min:3"
                 >
                   <v-textarea
-                    filled
-                    auto-grow
-                    :error-messages="errors"
-                    label="Description"
-                    placeholder="Tell viewers about your video"
-                    rows="5"
-                    counter="5000"
-                    max-length="5000"
-                    v-model="formData.description"
-                    row-height="20"
+                      filled
+                      auto-grow
+                      :error-messages="errors"
+                      label="Description"
+                      placeholder="Tell viewers about your video"
+                      rows="5"
+                      counter="5000"
+                      max-length="5000"
+                      v-model="formData.description"
+                      row-height="20"
                   ></v-textarea>
                 </ValidationProvider>
                 <ValidationProvider
-                  v-slot="{ errors }"
-                  name="Visibilty"
-                  rules="required|min:3"
+                    v-slot="{ errors }"
+                    name="Visibilty"
+                    rules="required|min:3"
                 >
                   <v-select
-                    :items="visibilty"
-                    :error-messages="errors"
-                    filled
-                    label="Visibilty"
-                    v-model="formData.visibilty"
+                      :items="visibilty"
+                      :error-messages="errors"
+                      filled
+                      label="Visibilty"
+                      v-model="formData.visibilty"
                   ></v-select>
                 </ValidationProvider>
                 <ValidationProvider
-                  v-slot="{ errors }"
-                  name="Cateogry"
-                  rules="required|min:3"
+                    v-slot="{ errors }"
+                    name="Cateogry"
+                    rules="required|min:3"
                 >
                   <v-select
-                    :items="categoriesTitles"
-                    :error-messages="errors"
-                    filled
-                    label="Categories"
-                    v-model="formData.category"
-                    :loading="categoryLoading"
+                      :items="categoriesTitles"
+                      :error-messages="errors"
+                      filled
+                      label="Categories"
+                      v-model="formData.category"
+                      :loading="categoryLoading"
                   ></v-select>
                 </ValidationProvider>
-
+                <ValidationProvider
+                    v-slot="{ errors }"
+                    name="hash"
+                    rules="required"
+                >
+                  <v-text-field
+                      v-model="formData.hash"
+                      :error-messages="errors"
+                      label="hash (required)"
+                      class="mb-3"
+                      filled
+                      dense
+                      counter="100"
+                      max-length="100"
+                  ></v-text-field>
+                </ValidationProvider>
                 <div class="mt-6 d-flex justify-space-between">
                   <v-btn
-                    :loading="submitLoading"
-                    type="submit"
-                    class="primary"
-                    depressed
-                    >Submit</v-btn
+                      :loading="submitLoading"
+                      type="submit"
+                      class="primary"
+                      depressed
+                  >Submit
+                  </v-btn
                   >
                 </div>
               </form>
             </ValidationObserver>
           </v-col>
           <v-col
-            order-sm="1"
-            cols="12"
-            sm="12"
-            md="4"
-            lg="4"
-            class="text-center"
+              order-sm="1"
+              cols="12"
+              sm="12"
+              md="4"
+              lg="4"
+              class="text-center"
           >
             <v-btn text @click="toggleShow">Upload Thumbnails</v-btn>
             <my-upload
-              field="thumbnail"
-              @crop-success="cropSuccess"
-              method="PUT"
-              v-model="show"
-              :width="1280"
-              :height="720"
-              :url="url"
-              :headers="headers"
-              img-format="jpg"
-              langType="en"
+                field="thumbnail"
+                @crop-success="cropSuccess"
+                method="PUT"
+                v-model="show"
+                :width="1280"
+                :height="720"
+                :headers="headers"
+                img-format="jpg"
+                langType="en"
+                :maxSize="1024"
             ></my-upload>
             <v-responsive width="330" class="mx-auto">
               <div v-if="!imgDataUrl" class="px-12" id="image-placeholder">
                 <v-icon>mdi-image-plus</v-icon>
               </div>
               <v-img
-                v-else
-                max-width="330"
-                height="350"
-                :src="imgDataUrl"
+                  v-else
+                  max-width="330"
+                  height="350"
+                  :src="imgDataUrl"
               ></v-img>
             </v-responsive>
             <p v-if="imgDataUrl == ''" class="red--text">
@@ -214,6 +230,8 @@
 import myUpload from "vue-image-crop-upload";
 import VideoService from "@/services/VideoService";
 import CategoryService from "@/services/CategoryService";
+import data2blob from "vue-image-crop-upload/utils/data2blob";
+
 export default {
   name: "UploadModal",
   props: ["openDialog"],
@@ -225,29 +243,30 @@ export default {
       uploading: false,
       submitLoading: false,
       categoryLoading: false,
-      interval: {},
+      // interval: {},
       value: 0,
       show: false,
-      rules: [
-        (value) =>
-          !value ||
-          value.size > 5000000 ||
-          `Video size should be less than 5 MB!, ${value.size}`,
-      ],
+      // rules: [
+      //   (value) =>
+      //       !value ||
+      //       value.size > 5000000 ||
+      //       `Video size should be less than 5 MB!, ${value.size}`,
+      // ],
       categoriesTitles: [],
       categories: [],
       visibilty: ["Public", "Private"],
-      selectedFile: [],
+      // selectedFile: [],
       formData: {
         id: "",
         title: "",
         description: "",
         category: "",
         visibilty: "",
+        hash: "",
       },
       imgDataUrl: "",
-      url: "",
-      headers: { Authorization: `Bearer ${this.$store.getters.getToken}` },
+      // url: "",
+      headers: {Authorization: `Bearer ${this.$store.getters.getToken}`},
     };
   },
   computed: {
@@ -256,89 +275,92 @@ export default {
     },
   },
   methods: {
-    async uploadVideo(e) {
-      const { valid } = await this.$refs.provider.validate(e);
-
-      if (!valid) return;
-      // console.log(this.selectedFile)
-
-      this.uploading = true;
-      const fd = new FormData();
-      fd.append("video", this.selectedFile, this.selectedFile.name);
-
-      let video = await VideoService.uploadVideo(fd, {
-        onUploadProgress: (uploadEvent) => {
-          this.value = Math.round(
-            (uploadEvent.loaded / uploadEvent.total) * 100
-          );
-        },
-      })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          this.uploaded = true;
-          this.uploading = false;
-        });
-
-      if (!video) return;
-      video = video.data.data;
-
-      this.formData.id = video._id;
-      this.formData.title = video.title;
-      this.formData.description = video.description;
-      this.formData.cateogry = video.cateogry;
-      this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
-      // this.interval = setInterval(() => {
-      //   if (this.value === 100) {
-      //     this.uploaded = true
-      //     clearInterval(this.inte-rval)
-      //   }
-      //   this.value += 10
-      // }, 1000)
-      // }
-      // }
-    },
+    // async uploadVideo(e) {
+    //   const {valid} = await this.$refs.provider.validate(e);
+    //
+    //   if (!valid) return;
+    //   // console.log(this.selectedFile)
+    //
+    //   this.uploading = true;
+    //   const fd = new FormData();
+    //   fd.append("video", this.selectedFile, this.selectedFile.name);
+    //
+    //   let video = await VideoService.uploadVideo(fd, {
+    //     onUploadProgress: (uploadEvent) => {
+    //       this.value = Math.round(
+    //           (uploadEvent.loaded / uploadEvent.total) * 100
+    //       );
+    //     },
+    //   })
+    //       .catch((err) => {
+    //         console.log(err);
+    //       })
+    //       .finally(() => {
+    //         this.uploaded = true;
+    //         this.uploading = false;
+    //       });
+    //
+    //   if (!video) return;
+    //   video = video.data.data;
+    //
+    //   this.formData.id = video._id;
+    //   this.formData.title = video.title;
+    //   this.formData.description = video.description;
+    //   this.formData.cateogry = video.cateogry;
+    //   this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
+    //   // this.interval = setInterval(() => {
+    //   //   if (this.value === 100) {
+    //   //     this.uploaded = true
+    //   //     clearInterval(this.inte-rval)
+    //   //   }
+    //   //   this.value += 10
+    //   // }, 1000)
+    //   // }
+    //   // }
+    // },
     async submit() {
-      if (this.imgDataUrl == "") return;
+      if (this.imgDataUrl === "") return;
       this.submitLoading = true;
       this.formData.category = this.categories.find(
-        (category) => category.title === this.formData.category
+          (category) => category.title === this.formData.category
       )._id;
 
-      const video = await VideoService.updateVideo(this.formData.id, {
+      const video = await VideoService.uploadVideo({
         title: this.formData.title,
         description: this.formData.description,
         categoryId: this.formData.category,
         status: this.formData.visibilty.toLowerCase(),
+        url: this.formData.hash,
       })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          this.submitLoading = false;
-          this.uploaded = false;
-        });
-
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => {
+            this.submitLoading = false;
+            this.uploaded = false;
+          });
       if (!video) return;
-      // this.$nextTick(() => {
-      //   this.$refs.form.reset()
-      // })
-      this.formData.visibilty = "";
+      await this.updateImg(video.data.data.id).catch((err) => {
+        console.log(err);
+      });
+      this.$nextTick(() => {
+        this.$refs.form.reset()
+      })
+      // this.formData.visibilty = "";
       this.imgDataUrl = "";
-      this.selectedFile = [];
+      // this.selectedFile = [];
       this.closeModal();
 
-      this.$router.push(`/studio/videos?${new Date()}`);
+      await this.$router.push(`/studio/videos?${new Date()}`);
       // console.log('submittied')
     },
     async getCategories() {
       this.categoryLoading = true;
       const categories = await CategoryService.getAll()
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => (this.categoryLoading = false));
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => (this.categoryLoading = false));
 
       this.categoriesTitles = categories.data.data.map((category) => {
         return category.title;
@@ -348,9 +370,9 @@ export default {
     closeModal() {
       this.$emit("closeDialog");
     },
-    selectFile() {
-      this.$refs.fileInput.$refs.input.click();
-    },
+    // selectFile() {
+    //   this.$refs.fileInput.$refs.input.click();
+    // },
     toggleShow() {
       this.show = !this.show;
     },
@@ -359,6 +381,13 @@ export default {
       console.log(field);
       this.imgDataUrl = imgDataUrl;
     },
+    async updateImg(id) {
+      if (this.imgDataUrl === "") return;
+      let fmData = new FormData();
+      fmData.append("thumbnail", data2blob(this.imgDataUrl, ["image/jpeg"]), "thumbnail.jpg");
+      let img = await VideoService.uploadThumbnail(id, fmData);
+      console.log(img);
+    }
   },
   components: {
     myUpload,
