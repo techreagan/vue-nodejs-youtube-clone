@@ -417,7 +417,10 @@ export default {
     // user: null
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
+    ...mapGetters(['currentUser', 'isAuthenticated',"getImgUrl"]),
+    getUrl(){
+      return this.getImgUrl
+    }
   },
   methods: {
     async search() {

@@ -235,13 +235,16 @@ export default {
       commentsLength: false,
       index: -1,
       btnLoading: false,
-      url: process.env.VUE_APP_URL,
+      // url: process.env.VUE_APP_URL,
       snackbar: false,
       loading: false
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'currentUser'])
+    ...mapGetters(['isAuthenticated', 'currentUser',"getImgUrl"]),
+    url(){
+      return this.getImgUrl
+    }
   },
   methods: {
     async getComments() {

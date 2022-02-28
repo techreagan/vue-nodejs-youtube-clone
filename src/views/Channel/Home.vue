@@ -2,7 +2,7 @@
   <div id="channel-home">
     <v-parallax
         height="230"
-        src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+        :src="require('@/assets/material.jpg')"
     ></v-parallax>
     <div class="nav-bgcolor">
       <div id="channel-header">
@@ -174,7 +174,6 @@ export default {
     subscribed: false,
     subscribeLoading: false,
     showSubBtn: true,
-    url: process.env.VUE_APP_URL,
     items: [
       'Home',
       'Videos',
@@ -189,7 +188,10 @@ export default {
     details: {}
   }),
   computed: {
-    ...mapGetters(['isAuthenticated', 'currentUser'])
+    ...mapGetters(['isAuthenticated', 'currentUser',"getImgUrl"]),
+    url(){
+      return this.getImgUrl;
+    }
   },
   components: {
     VideoCard,

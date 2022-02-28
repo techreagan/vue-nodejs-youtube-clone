@@ -108,7 +108,7 @@
                             <img
                               v-if="video.userId.photoUrl !== 'no-photo.jpg'"
                               :src="
-                                `${getUrl}/uploads/avatars/${video.userId.photoUrl}`
+                                `${getImgUrl}/uploads/avatars/${video.userId.photoUrl}`
                               "
                               :alt="`${video.userId.channelName} avatar`"
                             />

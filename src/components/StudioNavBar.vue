@@ -62,7 +62,7 @@
           <v-btn small color="red" depressed fab v-on="on" class="white--text">
             <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
               <img
-                :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
                 :alt="`${currentUser.channelName} avatar`"
               />
             </v-avatar>
@@ -80,7 +80,7 @@
               <v-list-item-avatar>
                 <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
                   <img
-                    :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                    :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
                     :alt="`${currentUser.channelName} avatar`"
                   />
                 </v-avatar>
@@ -208,7 +208,7 @@
                   v-if="currentUser.photoUrl !== 'no-photo.jpg'"
                 >
                   <img
-                    :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                    :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
                     :alt="`${currentUser.channelName} avatar`"
                   />
                 </v-avatar>
@@ -325,7 +325,7 @@ export default {
     settingsDialog: false
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl'])
+    ...mapGetters(['currentUser', 'getUrl',"getImgUrl"])
   },
   methods: {
     search() {
