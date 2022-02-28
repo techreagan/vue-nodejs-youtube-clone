@@ -4,7 +4,7 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title class="font-weight-bold"
         ><router-link to="/" class="black--text" style="text-decoration: none"
-          >VueTube</router-link
+          >Web3Tube</router-link
         ></v-toolbar-title
       >
       <v-spacer></v-spacer>
@@ -51,7 +51,7 @@
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on"> <v-icon size="25">mdi-apps</v-icon></v-btn>
         </template>
-        <span>VueTube apps</span>
+        <span>Web3Tube apps</span>
       </v-tooltip> -->
 
       <!-- <v-tooltip bottom>
@@ -139,7 +139,7 @@
               <v-list-item-icon>
                 <v-icon>mdi-youtube-studio</v-icon>
               </v-list-item-icon>
-              <v-list-item-title>VueTube Studio</v-list-item-title>
+              <v-list-item-title>Web3Tube Studio</v-list-item-title>
             </v-list-item>
             <v-list-item @click="signOut">
               <v-list-item-icon>
@@ -170,7 +170,7 @@
               @click="drawer = !drawer"
               class="mr-5"
             ></v-app-bar-nav-icon>
-            <v-toolbar-title class="font-weight-bold">VueTube</v-toolbar-title>
+            <v-toolbar-title class="font-weight-bold">Web3Tube</v-toolbar-title>
           </v-list-item>
           <v-divider class="hidden-lg-and-up"></v-divider>
           <div v-for="parentItem in items" :key="parentItem.header">

@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default {
     state: {
+        isMobile:!!(!/(iPhone|iPod|Android|ios|iOS|iPad|Backerry|WebOS|Symbian|Windows Phone|Phone)/i.test(window.navigator.userAgent) && /Chrome/img.test(window.navigator.userAgent)),
         list: [],
     },
     getters: {

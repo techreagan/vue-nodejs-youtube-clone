@@ -5,9 +5,9 @@
         <v-card class="" outlined :loading="loading">
           <v-row class="justify-space-between px-4 pt-6 pb-12">
             <v-col cols="12" sm="12" md="6">
-              <v-card-title class="text-center">VueTube</v-card-title>
+              <v-card-title class="text-center">Web3Tube</v-card-title>
               <v-card-subtitle class="mb-5"
-              >Create your VueTube account
+              >Create your Web3Tube account
               </v-card-subtitle
               >
               <v-card-text>
@@ -45,7 +45,7 @@
                     </ValidationProvider>
                     <!--password-->
                     <v-row class="justify-space-between">
-                      <v-col cols="12">
+                      <v-col cols="12" v-if="$store.state.tips.isMobile">
                         <v-btn @click="connectMetaMask">
                           MetaMask
                         </v-btn>
