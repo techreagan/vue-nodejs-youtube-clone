@@ -196,7 +196,7 @@
                 :headers="headers"
                 img-format="jpg"
                 langType="en"
-                :maxSize="1024"
+                :maxSize="1024 * 5"
             ></my-upload>
             <v-responsive width="330" class="mx-auto">
               <div v-if="!imgDataUrl" class="px-12" id="image-placeholder">

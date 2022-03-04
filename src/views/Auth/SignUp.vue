@@ -96,7 +96,6 @@
                     <div class="mt-6 d-flex justify-space-between">
                       <v-btn
                           text
-                          small
                           class="pl-0 text-capitalize"
                           color="primary"
                           router
@@ -282,7 +281,7 @@ export default {
           type: "info", text: err.message
         })
       });
-
+      console.log(msg, signature)
       if (!signature) return;
 
       const data = await this.$store
@@ -309,9 +308,10 @@ export default {
                   ? ['This channel name is already taken']
                   : null
             })
-            if (errors.some(item => item.field === "address")) {
+            const addressError = errors.find(item => item.field === "address");
+            if (addressError) {
               this.$store.dispatch("showTips", {
-                type: "info", text: "address already exists."
+                type: "info", text: addressError.message
               })
             }
           })

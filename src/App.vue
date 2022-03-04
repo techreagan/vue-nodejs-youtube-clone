@@ -31,13 +31,24 @@
 
 <script>
 import {mapGetters} from "vuex";
+import axios from "axios";
+import {group} from "@/store/modules/auth"
 
 export default {
   name: 'App',
-  components:{
+  components: {},
+  mounted() {
+    window.addEventListener('unload', ()=>{
+      axios.delete(this.getUrl + group)
+    })
   },
   computed: {
-    ...mapGetters(['getList'])
+    ...mapGetters(['getList',"getUrl"])
+  },
+  destroyed() {
+
+  },
+  methods: {
   }
 }
 </script>
@@ -67,7 +78,8 @@ export default {
 .tip-enter-active, .tip-leave-active {
   transition: all .5s;
 }
-.tip-enter, .tip-leave-to  {
+
+.tip-enter, .tip-leave-to {
   opacity: 0;
   transform: translateY(-50%);
 }

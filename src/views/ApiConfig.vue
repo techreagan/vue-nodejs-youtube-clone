@@ -26,7 +26,7 @@
           <div class="setting">
             <v-btn
                 type="submit"
-            >Sign up
+            >Setting
             </v-btn
             >
           </div>
@@ -57,12 +57,14 @@ export default {
       if (!this.$refs.form.validate()) return;
       this.observe(this.api).catch(() => {
         this.$refs.form.setErrors({
-          'Api': ['Api invalid']
+          'Api': ['failure to observe']
         })
       })
     },
     observe(api) {
-      return axios().post(api + "/group/observe/web3youtube").then(() => {
+      return axios().post(api + "/group/observe/web3youtube",{
+        peers:"d90bff7d41323a654ccc777086f4bbf4e0ace467b019a306994ad253bacd6289"
+      }).then(() => {
         sessionStorage.setItem("api", api);
         this.$store.commit("SET_URL", api);
         this.$router.push({name: 'Home'})

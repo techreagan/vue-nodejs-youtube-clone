@@ -68,7 +68,6 @@
                   <div class="mt-6 d-flex justify-space-between">
                     <v-btn
                         text
-                        small
                         class="pl-0 text-capitalize"
                         color="primary"
                         router
