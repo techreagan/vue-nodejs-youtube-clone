@@ -18,60 +18,85 @@
         </div>
       </div>
 
-      <!--      <v-card-text-->
-      <!--        v-if="!uploaded"-->
-      <!--        class="d-flex flex-column align-center my-md-12 py-md-12 my-sm-8 py-sm-8 my-xs-0 py-xs-0 my-12 py-12"-->
-      <!--      >-->
-      <!--        <div v-if="!uploading" class="text-center">-->
-      <!--          <div>-->
-      <!--            <v-btn-->
-      <!--              icon-->
-      <!--              class="grey lighten-2 mb-4"-->
-      <!--              style="height: 104px;width: 104px;"-->
-      <!--              @click="selectFile"-->
-      <!--              ><v-icon x-large class="grey&#45;&#45;text text&#45;&#45;darken-1"-->
-      <!--                >mdi-upload</v-icon-->
-      <!--              ></v-btn-->
-      <!--            >-->
-      <!--          </div>-->
-
-      <!--          <ValidationProvider-->
-      <!--            rules="required|size:5000"-->
-      <!--            v-slot="{ errors }"-->
-      <!--            name="file"-->
-      <!--            ref="provider"-->
-      <!--          >-->
-      <!--            <v-file-input-->
-      <!--              @change="uploadVideo"-->
-      <!--              v-model="selectedFile"-->
-      <!--              accept="video/mp4"-->
-      <!--              placeholder="Pick an video"-->
-      <!--              prepend-icon="mdi-video"-->
-      <!--              :error-messages="errors"-->
-      <!--              ref="fileInput"-->
-      <!--            ></v-file-input>-->
-      <!--          </ValidationProvider>-->
-      <!--          <v-btn-->
-      <!--            type="submit"-->
-      <!--            depressed-->
-      <!--            @click="$refs.fileInput.$refs.input.click()"-->
-      <!--            class="blue darken-3 flat white&#45;&#45;text mt-4"-->
-      <!--            >Select File</v-btn-->
-      <!--          >-->
-      <!--        </div>-->
-
-      <!--        <v-progress-circular-->
-      <!--          v-else-->
-      <!--          :rotate="360"-->
-      <!--          :size="100"-->
-      <!--          :width="15"-->
-      <!--          :value="value"-->
-      <!--          color="teal"-->
-      <!--        >-->
-      <!--          {{ value }}-->
-      <!--        </v-progress-circular>-->
-      <!--      </v-card-text>-->
-      <v-card-text>
+      <v-card-text
+          v-if="!uploaded"
+          class="d-flex flex-column align-center my-md-12 py-md-12 my-sm-8 py-sm-8 my-xs-0 py-xs-0 my-12 py-12"
+      >
+        <div v-if="!uploading" class="flex justify-center align-end row col-12">
+          <div class="text-center col-xs-12 pa-0">
+            <div>
+              <v-btn
+                  icon
+                  class="grey lighten-2 mb-4"
+                  style="height: 104px;width: 104px;"
+                  @click="selectFile"
+              >
+                <v-icon x-large class="grey--text text--darken-1"
+                >mdi-upload
+                </v-icon
+                >
+              </v-btn
+              >
+            </div>
+            <ValidationProvider
+                rules="required"
+                v-slot="{ errors }"
+                name="file"
+                ref="provider"
+            >
+              <v-file-input
+                  @change="changeFile"
+                  v-model="selectedFile"
+                  accept="video/mp4"
+                  placeholder="Pick an video"
+                  prepend-icon="mdi-video"
+                  :error-messages="errors"
+                  ref="fileInput"
+              ></v-file-input>
+            </ValidationProvider>
+            <v-btn
+                type="submit"
+                depressed
+                @click="$refs.fileInput.$refs.input.click()"
+                class="blue darken-3 flat white--text mt-4"
+            >Select File
+            </v-btn
+            >
+          </div>
+          <v-col :offset-lg="1" :cols="12" :lg="6" class="text-center pa-0" v-show="selectedFile">
+            <div class="d-flex align-center">
+              <span style="margin-right: 10px">PinState:</span>
+              <v-checkbox
+                  v-model="fileAttr.pin"
+              ></v-checkbox>
+            </div>
+            <div class="d-flex align-center">
+              <span style="margin-right: 10px">FileName:</span>
+              <v-text-field :rules="rules" v-model="fileAttr.name"></v-text-field>
+            </div>
+            <div>
+              <v-btn
+                  type="submit"
+                  depressed
+                  class="blue darken-3 white--text mt-4"
+              >
+                upload
+              </v-btn>
+            </div>
+          </v-col>
+        </div>
+        <v-progress-circular
+            v-else
+            :rotate="360"
+            :size="100"
+            :width="15"
+            :value="value"
+            color="teal"
+        >
+          {{ value }}
+        </v-progress-circular>
+      </v-card-text>
+      <v-card-text v-else>
         <h2 class="mb-6">Details</h2>
         <v-row>
           <v-col
@@ -231,6 +256,7 @@ import myUpload from "vue-image-crop-upload";
 import VideoService from "@/services/VideoService";
 import CategoryService from "@/services/CategoryService";
 import data2blob from "vue-image-crop-upload/utils/data2blob";
+import {mapGetters} from "vuex";
 
 export default {
   name: "UploadModal",
@@ -246,16 +272,17 @@ export default {
       // interval: {},
       value: 0,
       show: false,
-      // rules: [
-      //   (value) =>
-      //       !value ||
-      //       value.size > 5000000 ||
-      //       `Video size should be less than 5 MB!, ${value.size}`,
-      // ],
+      rules: [
+        value => !!value || 'Required.',
+      ],
       categoriesTitles: [],
       categories: [],
       visibilty: ["Public", "Private"],
-      // selectedFile: [],
+      selectedFile: null,
+      fileAttr: {
+        pin: false,
+        name: ""
+      },
       formData: {
         id: "",
         title: "",
@@ -270,54 +297,59 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["getApi"]),
     dialog() {
       return this.openDialog;
     },
   },
   methods: {
-    // async uploadVideo(e) {
-    //   const {valid} = await this.$refs.provider.validate(e);
-    //
-    //   if (!valid) return;
-    //   // console.log(this.selectedFile)
-    //
-    //   this.uploading = true;
-    //   const fd = new FormData();
-    //   fd.append("video", this.selectedFile, this.selectedFile.name);
-    //
-    //   let video = await VideoService.uploadVideo(fd, {
-    //     onUploadProgress: (uploadEvent) => {
-    //       this.value = Math.round(
-    //           (uploadEvent.loaded / uploadEvent.total) * 100
-    //       );
-    //     },
-    //   })
-    //       .catch((err) => {
-    //         console.log(err);
-    //       })
-    //       .finally(() => {
-    //         this.uploaded = true;
-    //         this.uploading = false;
-    //       });
-    //
-    //   if (!video) return;
-    //   video = video.data.data;
-    //
-    //   this.formData.id = video._id;
-    //   this.formData.title = video.title;
-    //   this.formData.description = video.description;
-    //   this.formData.cateogry = video.cateogry;
-    //   this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
-    //   // this.interval = setInterval(() => {
-    //   //   if (this.value === 100) {
-    //   //     this.uploaded = true
-    //   //     clearInterval(this.inte-rval)
-    //   //   }
-    //   //   this.value += 10
-    //   // }, 1000)
-    //   // }
-    //   // }
-    // },
+    changeFile(e) {
+      if (!e) return;
+      this.fileAttr.name = e.name.split('.').slice(0, -1).join('.');
+    },
+    async uploadVideo(e) {
+      const {valid} = await this.$refs.provider.validate(e);
+      //
+      if (!valid) return;
+      // // console.log(this.selectedFile)
+      //
+      // this.uploading = true;
+      // const fd = new FormData();
+      // fd.append("video", this.selectedFile, this.selectedFile.name);
+      //
+      // let video = await VideoService.uploadVideo(fd, {
+      //   onUploadProgress: (uploadEvent) => {
+      //     this.value = Math.round(
+      //         (uploadEvent.loaded / uploadEvent.total) * 100
+      //     );
+      //   },
+      // })
+      //     .catch((err) => {
+      //       console.log(err);
+      //     })
+      //     .finally(() => {
+      //       this.uploaded = true;
+      //       this.uploading = false;
+      //     });
+      //
+      // if (!video) return;
+      // video = video.data.data;
+      //
+      // this.formData.id = video._id;
+      // this.formData.title = video.title;
+      // this.formData.description = video.description;
+      // this.formData.cateogry = video.cateogry;
+      // this.url = `${process.env.VUE_APP_URL}/api/v1/videos/${video._id}/thumbnails`;
+      // this.interval = setInterval(() => {
+      //   if (this.value === 100) {
+      //     this.uploaded = true
+      //     clearInterval(this.inte-rval)
+      //   }
+      //   this.value += 10
+      // }, 1000)
+      // }
+      // }
+    },
     async submit() {
       if (this.imgDataUrl === "") return;
       this.submitLoading = true;
@@ -370,9 +402,9 @@ export default {
     closeModal() {
       this.$emit("closeDialog");
     },
-    // selectFile() {
-    //   this.$refs.fileInput.$refs.input.click();
-    // },
+    selectFile() {
+      this.$refs.fileInput.$refs.input.click();
+    },
     toggleShow() {
       this.show = !this.show;
     },

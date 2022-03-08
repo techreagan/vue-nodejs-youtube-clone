@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+/aurora
+/build
 
 # local env files
 .env.local
@@ -19,3 +21,4 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+

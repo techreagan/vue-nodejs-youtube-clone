@@ -156,6 +156,8 @@
 <script>
 import VideoService from "@/services/VideoService";
 import moment from "moment";
+import {mapGetters} from "vuex";
+
 export default {
   data: () => ({
     loading: false,
@@ -164,7 +166,7 @@ export default {
     dialogDelete: false,
     tab: null,
     search: "",
-    url: process.env.VUE_APP_URL,
+    // url: process.env.VUE_APP_URL,
     headers: [
       {
         text: "Video",
@@ -180,6 +182,12 @@ export default {
     videos: [],
     itemToDelete: {},
   }),
+  computed:{
+    ...mapGetters(["getImgUrl"]),
+    url(){
+      return this.getImgUrl
+    }
+  },
   methods: {
     async getVideos() {
       this.loading = true;
@@ -203,6 +211,7 @@ export default {
     },
     async deleteItem() {
       this.deleteBtnLoading = true;
+      console.log(this.itemToDelete._id)
       await VideoService.deleteById(this.itemToDelete._id)
         .catch((err) => console.log(err))
         .finally(() => {

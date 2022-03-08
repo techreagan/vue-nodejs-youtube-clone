@@ -6,9 +6,10 @@ const state = {
     api: "",
     url: "",
     imgUrl: "",
+    ws: null,
     token: localStorage.getItem('token') || null,
     user: JSON.parse(localStorage.getItem('user')) || null,
-    isUserLoggedIn: localStorage.getItem('token') || false
+    isUserLoggedIn: localStorage.getItem('token') || false,
 }
 
 const getters = {
@@ -33,13 +34,12 @@ const getters = {
 }
 
 const mutations = {
+    SET_WS(state, ws) {
+        state.ws = ws;
+    },
     SET_TOKEN(state, token) {
         state.token = token
-        if (token) {
-            state.isUserLoggedIn = true
-        } else {
-            state.isUserLoggedIn = false
-        }
+        state.isUserLoggedIn = !!token;
     },
     SET_USER_DATA(state, data) {
         state.user = data

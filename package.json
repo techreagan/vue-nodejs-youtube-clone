@@ -1,11 +1,20 @@
 {
   "name": "web3tube",
   "version": "0.1.0",
+  "author": {
+    "name": "web3tube",
+    "email": "**"
+  },
+  "description": "web3tube",
+  "license": "MIT",
+  "main": "electron/main.js",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "electron:win64": "electron-builder --win  --x64",
+    "electron:dev": "cross-env TERGET_ENV=development electron ."
   },
   "dependencies": {
     "@walletconnect/client": "^1.7.1",
@@ -13,7 +22,9 @@
     "@walletconnect/web3-provider": "^1.7.1",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
+    "eventemitter3": "^4.0.7",
     "moment": "^2.24.0",
+    "reconnecting-websocket": "^4.4.0",
     "vee-validate": "^3.2.5",
     "vue": "^2.6.11",
     "vue-image-crop-upload": "^2.5.0",
@@ -31,6 +42,9 @@
     "@vue/cli-plugin-vuex": "^4.3.0",
     "@vue/cli-service": "^4.3.0",
     "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^16.0.2",
+    "electron-builder": "^22.14.5",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.19.0",
@@ -57,5 +71,38 @@
     "> 1%",
     "last 2 versions",
     "not dead"
-  ]
+  ],
+  "build": {
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    },
+    "extraFiles": [
+      "public/favicon.png",
+      "aurora"
+    ],
+    "productName": "web3Tube",
+    "appId": "com.web3Tube.app",
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "win": {
+      "icon": "public/logo.png",
+      "target": "nsis"
+    }
+  }
 }
