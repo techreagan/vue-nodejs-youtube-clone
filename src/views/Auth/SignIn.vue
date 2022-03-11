@@ -25,18 +25,27 @@
                   <!--                    ></v-text-field>-->
                   <!--                  </ValidationProvider>-->
                   <v-row>
-                    <v-col cols="12"  v-if="$store.state.tips.isMobile">
+                    <v-col cols="12" v-if="$store.state.tips.isMobile">
                       <v-btn @click="connectMetaMask">
                         MetaMask
                       </v-btn>
                     </v-col>
                     <v-col cols="12">
-                      <v-btn @click="connectWalletConnect">
-                        WalletConnect
-                      </v-btn>
+                      <v-row>
+                        <v-col offset="-1">
+                          <v-btn @click="connectWalletConnect">
+                            WalletConnect
+                          </v-btn>
+                        </v-col>
+                        <v-col v-if="connectType === 'walletConnect'">
+                          <v-btn @click="disconnectWalletConnect">
+                            Disconnect
+                          </v-btn>
+                        </v-col>
+                      </v-row>
                     </v-col>
                   </v-row>
-                  <v-row  v-if="address">
+                  <v-row v-if="address">
                     <v-col cols="12">
                       {{ address }}
                     </v-col>
@@ -105,9 +114,15 @@ export default {
     // email: '',
     // password: '',
     loading: false,
-    address: ""
+    address: "",
+    connectType: "",
   }),
   methods: {
+    disconnectWalletConnect() {
+      this.web3?.currentProvider.disconnect();
+      this.address = "";
+      this.connectType = "";
+    },
     async signin() {
       if (!this.address) {
         this.$store.dispatch("showTips", {
@@ -178,6 +193,7 @@ export default {
           }
         });
         await provider.enable();
+        this.connectType = "walletConnect";
         this.$store.dispatch("showTips", {
           type: "success", text: "Connection successful"
         })

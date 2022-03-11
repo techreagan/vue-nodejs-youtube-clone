@@ -1,5 +1,12 @@
 <template>
   <v-app>
+    <v-overlay :value="loading" style="z-index: 999" class="text-center">
+      <v-progress-circular
+          indeterminate
+          size="64"
+      ></v-progress-circular>
+      <div style="margin-top: 20px;font-size: 20px">Connecting to a p2p network</div>
+    </v-overlay>
     <div class="tips">
       <transition-group name="tip">
         <template v-for="(item,index) of getList">
@@ -9,10 +16,11 @@
         </template>
       </transition-group>
     </div>
-    <router-view name="NavBar"></router-view>
-    <router-view name="StudioNavBar"></router-view>
-    <v-content
-        :class="{
+    <div v-if="!loading" class="fill-height">
+      <router-view name="NavBar"></router-view>
+      <router-view name="StudioNavBar"></router-view>
+      <v-content class="fill-height"
+                 :class="{
         'content-bg': ![
           'SignIn',
           'SignUp',
@@ -23,32 +31,67 @@
           ? true
           : false
       }"
-    >
-      <router-view></router-view>
-    </v-content>
+      >
+        <router-view></router-view>
+      </v-content>
+    </div>
   </v-app>
 </template>
 
 <script>
 import {mapGetters} from "vuex";
-import axios from "axios";
-import {group} from "@/store/modules/auth"
+import {websocket} from "@/utils/util";
+import AuroraService from "@/services/AuroraService";
 
 export default {
   name: 'App',
+  data() {
+    return {
+      loading: false,
+    }
+  },
+  async created() {
+    let wsHost = sessionStorage.getItem("ws");
+    let api = sessionStorage.getItem("api");
+    if (wsHost && api) {
+      AuroraService.observe(api).then(() => {
+        this.$store.commit("SET_WS", websocket(wsHost));
+      });
+    }
+  },
   components: {},
   mounted() {
-    window.addEventListener('unload', ()=>{
-      axios.delete(this.getUrl + group)
-    })
+
   },
   computed: {
-    ...mapGetters(['getList',"getUrl"])
+    ...mapGetters(['getList', "getUrl"]),
+    getWs() {
+      return this.$store.state.auth.ws;
+    }
   },
   destroyed() {
 
   },
-  methods: {
+  methods: {},
+  watch: {
+    "$store.state.auth.ws": {
+      handler: function (ws) {
+        let _this = this;
+        if (!ws) return;
+        this.loading = true;
+        ws.send({
+          "id": 1,
+          "jsonrpc": "2.0",
+          "method": "group_subscribe",
+          "params": ["peers", "web3youtube"]
+        }, (err, {result}) => {
+          ws.on(result, (res) => {
+            console.log(res);
+            _this.loading = !res.connected.length;
+          })
+        })
+      }
+    }
   }
 }
 </script>

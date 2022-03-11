@@ -152,7 +152,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     const loggedIn = localStorage.getItem('user')
     const api = sessionStorage.getItem("api");
-    if(to.path !== "/Config" && !api){
+    const ws = sessionStorage.getItem("ws");
+    if(to.path !== "/Config" && !api && !ws){
         return  next('/Config')
     }
 

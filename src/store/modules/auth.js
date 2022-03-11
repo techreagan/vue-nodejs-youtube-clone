@@ -1,7 +1,11 @@
 import AuthenticationService from '@/services/AuthenticationService'
 
+export const proxyGroup = "web3youtube";
+export const domainName = "web3.com";
+export const storeGroup = "web3youtube-store";
 
-export const group = "/group/http/web3youtube/web3.com";
+export const group = `/group/http/${proxyGroup}/${domainName}`;
+
 const state = {
     api: "",
     url: "",

@@ -45,10 +45,11 @@
 </template>
 
 <script>
-import axios from "../services/Api"
-import {ipc, isElectron} from "@/utils/util";
+import {websocket} from "@/utils/util";
+import AuroraService from "../services/AuroraService"
+import {isElectron, ipc} from "@/utils/util";
 
-let ipcRenderer = ipc()
+let ipcRenderer = ipc();
 export default {
   name: "ApiConfig",
   data: function () {
@@ -59,44 +60,43 @@ export default {
   },
   created() {
     if (isElectron) {
-      ipcRenderer.on("start", (event, {api}) => {
-        this.observe(api).catch((err) => {
-          this.$store.dispatch("showTips", {
-            type: "info", text: err.message
-          })
-        }).finally(() => {
+      ipcRenderer.on("start", (event,{api}) => {
+        console.log(api)
+        this.set(api).finally(() => {
           this.loading = false;
-        });
+        })
       })
     } else {
       const {origin} = window.location;
-      this.observe(origin).catch((err) => {
-        console.log(err);
-      }).finally(() => {
+      this.set(origin).finally(() => {
         this.loading = false;
-      });
+      })
     }
+
   },
   methods: {
-    setting() {
+    async setting() {
       if (!this.$refs.form.validate()) return;
-      this.observe(this.api).catch(() => {
+      this.set(this.api).catch(() => {
         this.$refs.form.setErrors({
-          'Api': ['failure to observe']
+          'Api': "Connection failed"
         })
       })
     },
-    observe(api) {
-      return axios().post(api + "/group/observe/web3youtube", {
-        nodes: "d90bff7d41323a654ccc777086f4bbf4e0ace467b019a306994ad253bacd6289",
-        "keep-connected-peers": 1
-      }).then(() => {
-        sessionStorage.setItem("api", api);
-        this.$store.commit("SET_URL", api);
-        // this.$router.push({name: 'Home'})
-      })
+    async set(api) {
+      let res = await AuroraService.getPort(api);
+      let wsPort = res.data.rpcWsPort;
+      if (!wsPort) throw new Error("ws not enabled");
+      let host = `ws://${new URL(api).hostname}:${wsPort}`;
+      await AuroraService.observe(api);
+      sessionStorage.setItem("debugApi", `http://${new URL(api).hostname}:${res.data.debugApiPort}`);
+      sessionStorage.setItem("api", api);
+      sessionStorage.setItem("ws", host);
+      this.$store.commit("SET_URL", api);
+      this.$store.commit("SET_WS", websocket(host));
+      await this.$router.push({name: 'Home'});
     }
-  }
+  },
 }
 </script>
 

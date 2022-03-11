@@ -3,23 +3,26 @@
     <v-app-bar class="white" app clipped-left>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title class="font-weight-bold"
-        ><router-link
-          to="/studio"
-          class="black--text"
-          style="text-decoration: none"
-          >Studio</router-link
-        ></v-toolbar-title
+      >
+        <router-link
+            to="/studio"
+            class="black--text"
+            style="text-decoration: none"
+        >Studio
+        </router-link
+        >
+      </v-toolbar-title
       >
       <v-spacer></v-spacer>
       <v-text-field
-        flat
-        hide-details
-        append-icon="mdi-magnify"
-        placeholder="Search"
-        outlined
-        dense
-        @click:append="search"
-        class="hidden-sm-and-down"
+          flat
+          hide-details
+          append-icon="mdi-magnify"
+          placeholder="Search"
+          outlined
+          dense
+          @click:append="search"
+          class="hidden-sm-and-down"
       ></v-text-field>
       <!-- <v-toolbar-title>Page title</v-toolbar-title> -->
 
@@ -29,13 +32,16 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
               <v-btn
-                class="mr-8 createVideoBtn"
-                outlined
-                v-on="{ ...tooltip, ...menu }"
-                ><v-icon size="25" class="red--text small"
-                  >mdi-video-plus</v-icon
+                  class="mr-8 createVideoBtn"
+                  outlined
+                  v-on="{ ...tooltip, ...menu }"
+              >
+                <v-icon size="25" class="red--text small"
+                >mdi-video-plus
+                </v-icon
                 >
-                Create</v-btn
+                Create
+              </v-btn
               >
             </template>
             <span>Create a video and more</span>
@@ -44,7 +50,9 @@
         <v-list>
           <v-list-item @click="modal">
             <v-list-item-icon class="mr-3"
-              ><v-icon>mdi-play-box-outline</v-icon></v-list-item-icon
+            >
+              <v-icon>mdi-play-box-outline</v-icon>
+            </v-list-item-icon
             >
             <v-list-item-title>Upload video</v-list-item-title>
           </v-list-item>
@@ -62,8 +70,8 @@
           <v-btn small color="red" depressed fab v-on="on" class="white--text">
             <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
               <img
-                :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                :alt="`${currentUser.channelName} avatar`"
+                  :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                  :alt="`${currentUser.channelName} avatar`"
               />
             </v-avatar>
             <template v-else>
@@ -80,8 +88,8 @@
               <v-list-item-avatar>
                 <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
                   <img
-                    :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                    :alt="`${currentUser.channelName} avatar`"
+                      :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                      :alt="`${currentUser.channelName} avatar`"
                   />
                 </v-avatar>
                 <template v-else>
@@ -97,11 +105,13 @@
 
               <v-list-item-content>
                 <v-list-item-title class="text-capitalize">{{
-                  currentUser.channelName
-                }}</v-list-item-title>
+                    currentUser.channelName
+                  }}
+                </v-list-item-title>
                 <v-list-item-subtitle>{{
-                  currentUser.email
-                }}</v-list-item-subtitle>
+                    currentUser.email
+                  }}
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -110,8 +120,8 @@
 
           <v-list>
             <v-list-item
-              router
-              :to="`/channels/${$store.getters.currentUser._id}`"
+                router
+                :to="`/channels/${$store.getters.currentUser._id}`"
             >
               <v-list-item-icon>
                 <v-icon>mdi-account-box</v-icon>
@@ -139,15 +149,15 @@
       <div tag="div" class="v-navigation-drawer__content" v-bar>
         <v-list tile class="py-0">
           <v-list-item
-            v-for="item in items[0].pages"
-            :key="item.title"
-            href
-            tile
-            class="mb-0"
-            router
-            :to="item.link"
-            exact
-            active-class="active-item"
+              v-for="item in items[0].pages"
+              :key="item.title"
+              href
+              tile
+              class="mb-0"
+              router
+              :to="item.link"
+              exact
+              active-class="active-item"
           >
             <v-list-item-icon>
               <v-icon>{{ item.icon }}</v-icon>
@@ -155,8 +165,9 @@
 
             <v-list-item-content>
               <v-list-item-title class=" font-weight-medium subtitle-2">{{
-                item.title
-              }}</v-list-item-title>
+                  item.title
+                }}
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -166,14 +177,14 @@
           <v-divider></v-divider>
           <v-list>
             <v-list-item
-              v-for="item in items[1].pages"
-              :key="item.title"
-              link
-              class="mb-0"
-              :to="item.link === '' ? '' : item.link"
-              @click="settingsMoal(item.title)"
-              exact
-              active-class="active-item"
+                v-for="item in items[1].pages"
+                :key="item.title"
+                link
+                class="mb-0"
+                :to="item.link === '' ? '' : item.link"
+                @click="settingsMoal(item.title)"
+                exact
+                active-class="active-item"
             >
               <v-list-item-icon>
                 <v-icon>{{ item.icon }}</v-icon>
@@ -181,8 +192,9 @@
 
               <v-list-item-content>
                 <v-list-item-title class=" font-weight-medium subtitle-2">{{
-                  item.title
-                }}</v-list-item-title>
+                    item.title
+                  }}
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -193,23 +205,23 @@
           <v-list class="text-center">
             <v-list-item class="px-2">
               <v-btn
-                height="95"
-                width="95"
-                x-large
-                color="red"
-                depressed
-                fab
-                :to="`/channels/${currentUser._id}`"
-                class="white--text mx-auto"
+                  height="95"
+                  width="95"
+                  x-large
+                  color="red"
+                  depressed
+                  fab
+                  :to="`/channels/${currentUser._id}`"
+                  class="white--text mx-auto"
               >
                 <v-avatar
-                  height="96"
-                  width="96"
-                  v-if="currentUser.photoUrl !== 'no-photo.jpg'"
+                    height="96"
+                    width="96"
+                    v-if="currentUser.photoUrl !== 'no-photo.jpg'"
                 >
                   <img
-                    :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                    :alt="`${currentUser.channelName} avatar`"
+                      :src="`${getImgUrl}/uploads/avatars/${currentUser.photoUrl}`"
+                      :alt="`${currentUser.channelName} avatar`"
                   />
                 </v-avatar>
                 <!-- <template > -->
@@ -226,11 +238,13 @@
             <v-list-item link :to="`/channels/${currentUser._id}`">
               <v-list-item-content>
                 <v-list-item-title class="title">{{
-                  currentUser.channelName
-                }}</v-list-item-title>
+                    currentUser.channelName
+                  }}
+                </v-list-item-title>
                 <v-list-item-subtitle>{{
-                  currentUser.email
-                }}</v-list-item-subtitle>
+                    currentUser.email
+                  }}
+                </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -238,21 +252,23 @@
       </template>
     </v-navigation-drawer>
     <upload-video-modal
-      :open-dialog="dialog"
-      v-on:closeDialog="dialog = false"
+        v-if="dialog"
+        :open-dialog="dialog"
+        v-on:closeDialog="dialog = false"
     />
     <settings-modal
-      :open-dialog="settingsDialog"
-      v-on:closeDialog="settingsDialog = false"
+        :open-dialog="settingsDialog"
+        v-on:closeDialog="settingsDialog = false"
     />
   </nav>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 
 import UploadVideoModal from '@/components/UploadVideoModal'
 import SettingsModal from '@/components/SettingsModal'
+
 export default {
   name: 'StudioNavBar',
   data: () => ({
@@ -261,7 +277,7 @@ export default {
       {
         header: 'scroll',
         pages: [
-          { title: 'Dashboard', link: '/studio', icon: 'mdi-view-dashboard' },
+          {title: 'Dashboard', link: '/studio', icon: 'mdi-view-dashboard'},
           {
             title: 'Videos',
             link: '/studio/videos',
@@ -325,7 +341,7 @@ export default {
     settingsDialog: false
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl',"getImgUrl"])
+    ...mapGetters(['currentUser', 'getUrl', "getImgUrl"])
   },
   methods: {
     search() {
@@ -354,14 +370,17 @@ export default {
   .active-item {
     // border-radius: 0 !important;
     border-left: 3px solid #cc0202;
+
     .v-list-item__icon,
     .subtitle-2 {
       color: #cc0202 !important;
     }
   }
+
   .createVideoBtn {
     border-color: rgb(185, 181, 181);
   }
+
   // .v-navigation-drawer__border {
   //   width: 0 !important;
   // }
@@ -394,10 +413,12 @@ export default {
     width: 10px;
     background-color: #8d8a8a;
   }
+
   .v-navigation-drawer__content:hover .vb > .vb-dragger > .vb-dragger-styler {
     width: 10px;
     background-color: #8d8a8a;
   }
+
   .vb.vb-scrolling-phantom > .vb-dragger > .vb-dragger-styler {
     background-color: #8d8a8a;
   }

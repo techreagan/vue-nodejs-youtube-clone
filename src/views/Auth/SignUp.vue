@@ -51,9 +51,18 @@
                         </v-btn>
                       </v-col>
                       <v-col cols="12">
-                        <v-btn @click="connectWalletConnect">
-                          WalletConnect
-                        </v-btn>
+                        <v-row>
+                          <v-col offset="-1">
+                            <v-btn @click="connectWalletConnect">
+                              WalletConnect
+                            </v-btn>
+                          </v-col>
+                          <v-col v-if="connectType === 'walletConnect'">
+                            <v-btn @click="disconnectWalletConnect">
+                              Disconnect
+                            </v-btn>
+                          </v-col>
+                        </v-row>
                       </v-col>
                       <!--                      <v-col cols="6">-->
                       <!--                        <ValidationProvider-->
@@ -261,8 +270,14 @@ export default {
     // confirmPassword: '',
     loading: false,
     address: "",
+    connectType: ""
   }),
   methods: {
+    disconnectWalletConnect() {
+      this.web3?.currentProvider.disconnect();
+      this.address = "";
+      this.connectType = "";
+    },
     async signUp() {
       if (!this.address) {
         this.$store.dispatch("showTips", {
@@ -354,6 +369,7 @@ export default {
           }
         });
         await provider.enable();
+        this.connectType = "walletConnect";
         this.$store.dispatch("showTips", {
           type: "success", text: "Connection successful"
         })
