@@ -126,6 +126,32 @@ const routes = [
         meta: {requiresAuth: true}
     },
     {
+        path: '/rank',
+        name: 'Rank',
+        components: {
+            NavBar,
+            default: () =>
+                import(/* webpackChunkName: "video" */ '../views/Rank/Index.vue')
+        },
+        children: [
+            {
+                path: '/',
+                name: 'Subscriptions',
+                component: () =>
+                    import(
+                        /* webpackChunkName: "dashboard" */ '../views/Rank/Subscriptions'
+                        )
+            },
+            {
+                path: 'likes',
+                name: 'Likes',
+                component: () =>
+                    import(/* webpackChunkName: "video" */ '../views/Rank/Likes')
+            },
+        ],
+        meta: {requiresAuth: true}
+    },
+    {
         path: '/search',
         name: 'Search',
         components: {
@@ -153,8 +179,8 @@ router.beforeEach((to, from, next) => {
     const loggedIn = localStorage.getItem('user')
     const api = sessionStorage.getItem("api");
     const ws = sessionStorage.getItem("ws");
-    if(to.path !== "/Config" && !api && !ws){
-        return  next('/Config')
+    if (to.path !== "/Config" && !api && !ws) {
+        return next('/Config')
     }
 
     if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {

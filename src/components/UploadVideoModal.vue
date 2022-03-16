@@ -250,8 +250,8 @@
         </v-card-text>
         <v-card-actions v-if="!uploaded">
           <p class="text-center grey--text caption px-12 px-xs-0">
-            By submitting your videos to YouTube, you acknowledge that you agree
-            to YouTube's Terms of Service and Community Guidelines. Please be sure
+            By submitting your videos to Web3Tube, you acknowledge that you agree
+            to Web3Tube's Terms of Service and Community Guidelines. Please be sure
             not to violate others' copyright or privacy rights. Learn more
           </p>
         </v-card-actions>
@@ -358,17 +358,17 @@ export default {
               s({overlay: sendOverlay, data})
             }).catch(e => {
               f(e)
+            }).finally(() => {
+              ws.send({
+                "id": 2,
+                "jsonrpc": "2.0",
+                "method": "group_unsubscribe",
+                "params": [subStorage.result]
+              })
             })
           }
         })
       });
-
-      ws.send({
-        "id": 2,
-        "jsonrpc": "2.0",
-        "method": "group_unsubscribe",
-        "params": [subStorage.result]
-      })
 
       if (data.code) {
         if (data.code === 1001) return data.message;

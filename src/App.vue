@@ -54,9 +54,15 @@ export default {
     let wsHost = sessionStorage.getItem("ws");
     let api = sessionStorage.getItem("api");
     if (wsHost && api) {
-      AuroraService.observe(api).then(() => {
+      try {
+        await AuroraService.observe(api);
         this.$store.commit("SET_WS", websocket(wsHost));
-      });
+      } catch (e) {
+        this.$store.dispatch("showTips", {
+          type: "error",
+          text: "Failed to connect to the P2P network"
+        })
+      }
     }
   },
   components: {},
@@ -87,7 +93,7 @@ export default {
         }, (err, {result}) => {
           ws.on(result, (res) => {
             console.log(res);
-            _this.loading = !res.connected.length;
+            _this.loading = !(res.connected.length);
           })
         })
       }
