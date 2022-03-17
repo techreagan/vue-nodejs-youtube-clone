@@ -47,7 +47,7 @@
                     <v-avatar size="120" max-width="150" class="mx-auto red">
                       <img
                         v-if="result.photoUrl !== 'no-photo.jpg'"
-                        :src="`${getUrl}/uploads/avatars/${result.photoUrl}`"
+                        :src="`${getImgUrl}/uploads/avatars/${result.photoUrl}`"
                         :alt="`${result.channelName} avatar`"
                       />
                       <template v-else color="red">
@@ -104,7 +104,7 @@
                     <v-img
                       class="align-center"
                       :src="
-                        `${getUrl}/uploads/thumbnails/${result.thumbnailUrl}`
+                        `${getImgUrl}/uploads/thumbnails/${result.thumbnailUrl}`
                       "
                       :alt="`${result.userId.channelName} avatar`"
                     >
@@ -186,7 +186,7 @@ export default {
     infiniteId: +new Date()
   }),
   computed: {
-    ...mapGetters(['getUrl'])
+    ...mapGetters(['getImgUrl'])
   },
   methods: {
     async getSearchResults($state) {

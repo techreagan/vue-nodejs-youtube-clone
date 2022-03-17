@@ -7,11 +7,13 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
               <v-btn
-                @click="dialog = true"
-                class="mr-4 white"
-                icon
-                v-on="{ ...tooltip }"
-                ><v-icon size="25" class="small">mdi-upload</v-icon></v-btn
+                  @click="dialog = true"
+                  class="mr-4 white"
+                  icon
+                  v-on="{ ...tooltip }"
+              >
+                <v-icon size="25" class="small">mdi-upload</v-icon>
+              </v-btn
               >
             </template>
             <span>Upload video</span>
@@ -33,12 +35,13 @@
       </v-row>
     </v-container>
     <upload-video-modal
-      :open-dialog="dialog"
-      v-on:closeDialog="dialog = false"
+        v-if="dialog"
+        :open-dialog="dialog"
+        v-on:closeDialog="dialog = false"
     />
     <subscribers-modal
-      :open-dialog="subscribersDialog"
-      @closeDialog="subscribersDialog = false"
+        :open-dialog="subscribersDialog"
+        @closeDialog="subscribersDialog = false"
     />
   </div>
 </template>
@@ -57,7 +60,8 @@ export default {
     UploadVideoModal,
     SubscribersModal
   },
-  mounted() {}
+  mounted() {
+  }
 }
 </script>
 

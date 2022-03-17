@@ -1,8 +1,8 @@
 <template>
   <div id="channel-home">
     <v-parallax
-      height="230"
-      src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+        height="230"
+        :src="require('@/assets/material.jpg')"
     ></v-parallax>
     <div class="nav-bgcolor">
       <div id="channel-header">
@@ -10,16 +10,16 @@
           <v-row class="justify-space-between">
             <v-col cols="12" sm="5" md="5" lg="5" offset-md="1">
               <v-skeleton-loader
-                type="list-item-avatar-two-line"
-                :loading="loading"
-                class="mr-1"
+                  type="list-item-avatar-two-line"
+                  :loading="loading"
+                  class="mr-1"
               >
                 <v-card class="transparent" flat>
                   <v-list-item three-line>
                     <v-list-item-avatar size="80">
                       <v-img
-                        v-if="channel.photoUrl !== 'no-photo.jpg'"
-                        :src="`${url}/uploads/avatars/${channel.photoUrl}`"
+                          v-if="channel.photoUrl !== 'no-photo.jpg'"
+                          :src="`${url}/uploads/avatars/${channel.photoUrl}`"
                       ></v-img>
 
                       <v-avatar v-else color="red" size="60">
@@ -32,10 +32,11 @@
                     </v-list-item-avatar>
                     <v-list-item-content class="align-self-auto">
                       <v-list-item-title class="headline mb-1">{{
-                        channel.channelName
-                      }}</v-list-item-title>
+                          channel.channelName
+                        }}
+                      </v-list-item-title>
                       <v-list-item-subtitle
-                        >{{ channel.subscribers }} subscribers
+                      >{{ channel.subscribers }} subscribers
                       </v-list-item-subtitle>
                     </v-list-item-content>
                   </v-list-item>
@@ -44,33 +45,35 @@
             </v-col>
             <v-col cols="12" sm="5" md="3" lg="3" v-if="!loading">
               <v-btn
-                v-if="currentUser && channel._id !== currentUser._id"
-                :class="[
+                  v-if="currentUser && channel._id !== currentUser._id"
+                  :class="[
                   { 'red white--text': !subscribed },
                   { 'grey grey--text lighten-3 text--darken-3': subscribed },
                   'mt-6'
                 ]"
-                tile
-                large
-                depressed
-                :loading="subscribeLoading"
-                @click="subscribe"
-                >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
+                  tile
+                  large
+                  depressed
+                  :loading="subscribeLoading"
+                  @click="subscribe"
+              >{{ !subscribed ? 'subscribe' : 'subscribed' }}
+              </v-btn
               >
               <!-- <template v-else-if="!currentUser" -->
               <v-btn
-                v-else-if="showSubBtn"
-                :class="[
+                  v-else-if="showSubBtn"
+                  :class="[
                   { 'red white--text': !subscribed },
                   { 'grey grey--text lighten-3 text--darken-3': subscribed },
                   'mt-6'
                 ]"
-                tile
-                large
-                depressed
-                :loading="subscribeLoading"
-                @click="subscribe"
-                >{{ !subscribed ? 'subscribe' : 'subscribed' }}</v-btn
+                  tile
+                  large
+                  depressed
+                  :loading="subscribeLoading"
+                  @click="subscribe"
+              >{{ !subscribed ? 'subscribe' : 'subscribed' }}
+              </v-btn
               >
               <!-- <v-btn icon class="ml-5 mt-6"><v-icon>mdi-bell</v-icon></v-btn> -->
             </v-col>
@@ -79,11 +82,11 @@
       </div>
       <v-card flat class="transparent">
         <v-tabs
-          v-model="tab"
-          background-color="transparent"
-          show-arrows
-          centered
-          center-active
+            v-model="tab"
+            background-color="transparent"
+            show-arrows
+            centered
+            center-active
         >
           <v-tab v-for="(item, i) in items" :key="i">
             {{ item }}
@@ -98,19 +101,19 @@
                 <!-- <v-sheet class="mx-auto"> -->
                 <v-slide-group class="pa-4" multiple show-arrows>
                   <v-slide-item
-                    v-for="(video, i) in loading ? 5 : videos.data"
-                    :key="i"
+                      v-for="(video, i) in loading ? 5 : videos.data"
+                      :key="i"
                   >
                     <v-skeleton-loader
-                      type="card-avatar"
-                      :loading="loading"
-                      width="250px"
-                      class="mr-1"
+                        type="card-avatar"
+                        :loading="loading"
+                        width="250px"
+                        class="mr-1"
                     >
                       <video-card
-                        :card="{ maxWidth: 250, type: 'noAvatar' }"
-                        :video="video"
-                        :channel="video.userId"
+                          :card="{ maxWidth: 250, type: 'noAvatar' }"
+                          :video="video"
+                          :channel="video.userId"
                       ></video-card>
                     </v-skeleton-loader>
                   </v-slide-item>
@@ -122,19 +125,19 @@
                 <v-card-title>Uploads</v-card-title>
                 <v-row>
                   <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                    lg="3"
-                    v-for="(video, i) in loading ? 10 : videos.data"
-                    :key="i"
-                    class="mx-xs-auto"
+                      cols="12"
+                      sm="6"
+                      md="4"
+                      lg="3"
+                      v-for="(video, i) in loading ? 10 : videos.data"
+                      :key="i"
+                      class="mx-xs-auto"
                   >
                     <v-skeleton-loader type="card-avatar" :loading="loading">
                       <video-card
-                        :card="{ maxWidth: 350 }"
-                        :video="video"
-                        :channel="video.userId"
+                          :card="{ maxWidth: 350 }"
+                          :video="video"
+                          :channel="video.userId"
                       ></video-card>
                     </v-skeleton-loader>
                   </v-col>
@@ -146,15 +149,15 @@
       </v-card>
     </div>
     <signin-modal
-      :openModal="signinDialog"
-      :details="details"
-      @closeModal="signinDialog = false"
+        :openModal="signinDialog"
+        :details="details"
+        @closeModal="signinDialog = false"
     />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 
 import UserService from '@/services/UserService'
 import VideoService from '@/services/VideoService'
@@ -171,15 +174,24 @@ export default {
     subscribed: false,
     subscribeLoading: false,
     showSubBtn: true,
-    url: process.env.VUE_APP_URL,
-    items: ['Home', 'Videos', 'Playlists', 'Community', 'Channels', 'about'],
+    items: [
+      'Home',
+      'Videos',
+      // 'Playlists',
+      // 'Community',
+      // 'Channels',
+      // 'about'
+    ],
     videos: {},
     channel: {},
     signinDialog: false,
     details: {}
   }),
   computed: {
-    ...mapGetters(['isAuthenticated', 'currentUser'])
+    ...mapGetters(['isAuthenticated', 'currentUser',"getImgUrl"]),
+    url(){
+      return this.getImgUrl;
+    }
   },
   components: {
     VideoCard,
@@ -192,12 +204,12 @@ export default {
       this.errored = false
 
       const channel = await UserService.getById(id)
-        .catch((err) => {
-          this.errored = true
-          console.log(err)
-          this.$router.push('/')
-        })
-        .finally(() => (this.loading = false))
+          .catch((err) => {
+            this.errored = true
+            console.log(err)
+            this.$router.push('/')
+          })
+          .finally(() => (this.loading = false))
 
       if (!channel) return
       this.channel = channel.data.data
@@ -219,11 +231,11 @@ export default {
       const videos = await VideoService.getAll('public', {
         userId: this.channel._id
       })
-        .catch((err) => {
-          console.log(err)
-          this.errored = true
-        })
-        .finally(() => (this.loading = false))
+          .catch((err) => {
+            console.log(err)
+            this.errored = true
+          })
+          .finally(() => (this.loading = false))
 
       if (typeof videos === 'undefined') return
 
@@ -232,13 +244,13 @@ export default {
     async checkSubscription(id) {
       if (!this.currentUser) return
       this.loading = true
-      const sub = await SubscriptionService.checkSubscription({ channelId: id })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          this.loading = false
-        })
+      const sub = await SubscriptionService.checkSubscription({channelId: id})
+          .catch((err) => {
+            console.log(err)
+          })
+          .finally(() => {
+            this.loading = false
+          })
       // console.log(sub.data.data)
       if (!sub) return
 
@@ -258,10 +270,10 @@ export default {
       const sub = await SubscriptionService.createSubscription({
         channelId: this.channel._id
       })
-        .catch((err) => console.log(err))
-        .finally(() => {
-          this.subscribeLoading = false
-        })
+          .catch((err) => console.log(err))
+          .finally(() => {
+            this.subscribeLoading = false
+          })
 
       if (!sub) return
 

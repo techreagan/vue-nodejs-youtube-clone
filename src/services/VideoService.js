@@ -23,5 +23,8 @@ export default {
   },
   deleteById(id) {
     return Api().delete(`videos/${id}`)
+  },
+  getUndone(){
+    return Api().get('videos/undone')
   }
 }

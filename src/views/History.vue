@@ -36,9 +36,11 @@
                       <v-col class="mx-auto" cols="3" sm="3" md="5" lg="5">
                         <v-img
                           class="align-center"
+                          style="cursor: pointer"
                           :src="
-                            `${getUrl}/uploads/thumbnails/${history.videoId.thumbnailUrl}`
+                            `${getImgUrl}/uploads/thumbnails/${history.videoId.thumbnailUrl}`
                           "
+                          @click="()=>{$router.push('/watch/' + history.videoId.id)}"
                         >
                         </v-img>
                       </v-col>
@@ -256,7 +258,7 @@ export default {
     clearLoading: false
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl'])
+    ...mapGetters(['currentUser', 'getUrl',"getImgUrl"])
   },
   methods: {
     async getHistories($state) {

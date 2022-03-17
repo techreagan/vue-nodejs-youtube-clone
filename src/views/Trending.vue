@@ -25,7 +25,7 @@
                   <v-img
                     max-height="200"
                     class="align-center"
-                    :src="`${getUrl}/uploads/thumbnails/${video.thumbnailUrl}`"
+                    :src="`${getImgUrl}/uploads/thumbnails/${video.thumbnailUrl}`"
                   >
                   </v-img>
                   <!-- </v-responsive> -->
@@ -105,7 +105,7 @@ export default {
     page: 1
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated',"getImgUrl"])
   },
   methods: {
     async getVideos($state) {

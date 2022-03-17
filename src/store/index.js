@@ -4,6 +4,8 @@ import Vuex from 'vuex'
 import auth from './modules/auth'
 import comments from './modules/comment'
 
+import tips from './modules/tips'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -60,5 +62,5 @@ export default new Vuex.Store({
     //   localStorage.removeItem('user')
     // }
   },
-  modules: { auth, comments }
+  modules: { auth, comments,tips }
 })
