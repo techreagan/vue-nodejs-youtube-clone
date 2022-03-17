@@ -14,5 +14,12 @@ export default {
         limit: 12
       }
     })
+  },
+  getRank(round) {
+    return Api().get('feelings/rank', {
+      params: {
+        round
+      }
+    })
   }
 }

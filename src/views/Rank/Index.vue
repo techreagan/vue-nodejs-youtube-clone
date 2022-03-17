@@ -3,7 +3,6 @@
     <v-tabs
         background-color="transparent"
         show-arrows
-        class="mb-10"
     >
       <v-tab
           v-for="item in items"

@@ -362,10 +362,11 @@ export default {
     async connectWalletConnect() {
       try {
         const provider = new WalletConnectProvider({
-          infuraId: "27e484dcd9e3efcfd25a83a78777cdf1",
           rpc: {
+            1: "https://mainnet.mycustomnode.com",
+            3: "https://ropsten.mycustomnode.com",
             97: "https://data-seed-prebsc-2-s2.binance.org:8545",
-            56: "https://bsc-dataseed1.binance.org/",
+            56: "https://bsc-dataseed1.binance.org",
           }
         });
         await provider.enable();

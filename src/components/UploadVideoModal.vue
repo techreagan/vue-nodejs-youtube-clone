@@ -71,6 +71,7 @@
                   prepend-icon="mdi-video"
                   :error-messages="errors"
                   ref="fileInput"
+                  :rules="rules"
               ></v-file-input>
             </ValidationProvider>
             <v-btn
@@ -82,16 +83,6 @@
             </v-btn
             >
           </div>
-          <!--        <v-progress-circular-->
-          <!--            v-else-->
-          <!--            :rotate="360"-->
-          <!--            :size="100"-->
-          <!--            :width="15"-->
-          <!--            :value="value"-->
-          <!--            color="teal"-->
-          <!--        >-->
-          <!--          {{ value }}-->
-          <!--        </v-progress-circular>-->
         </v-card-text>
         <v-card-text v-else>
           <h2 class="mb-6">Details</h2>
@@ -290,7 +281,12 @@ export default {
       value: 0,
       show: false,
       rules: [
-        value => !!value || 'Required.',
+        (value) => {
+          console.log(value)
+          return value.size > 300 * 1024 * 1024 &&
+              `Video size cannot exceed 300M!`
+        }
+        ,
       ],
       categoriesTitles: [],
       categories: [],
@@ -436,10 +432,8 @@ export default {
     },
     async uploadVideo(e) {
       const {valid} = await this.$refs.provider.validate(e);
-      //
       if (!valid) return;
       try {
-        // let ws = this.$store.state.auth.ws;
         this.uploading = true;
         this.statusTip = "Uploading the file to local node";
         await AuroraService.observeStorage(this.getApi);

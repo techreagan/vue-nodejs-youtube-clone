@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-simple-table fixed-header>
+    <v-simple-table fixed-header class="mt-10">
       <template v-slot:default>
         <thead>
         <tr>
