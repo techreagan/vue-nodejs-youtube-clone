@@ -73,6 +73,9 @@
     "not dead"
   ],
   "build": {
+    "directories": {
+      "output": "build"
+    },
     "nsis": {
       "oneClick": false,
       "perMachine": true,
@@ -101,7 +104,7 @@
       ]
     },
     "win": {
-      "icon": "public/logo.png",
+      "icon": "public/favicon.png",
       "target": "nsis"
     }
   }
